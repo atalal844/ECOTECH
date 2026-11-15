@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" fill="none" role="img" aria-label="ECOTECH Icon">
+  <defs>
+    <linearGradient id="ecoIconGrad" x1="0%" y1="15%" x2="100%" y2="85%">
+      <stop offset="0%" stop-color="#220B4E" />
+      <stop offset="45%" stop-color="#6E1B4B" />
+      <stop offset="78%" stop-color="#C9522B" />
+      <stop offset="100%" stop-color="#F28E20" />
+    </linearGradient>
+  </defs>
+  <rect width="140" height="140" rx="28" fill="#FFFFFF" />
+  <g transform="translate(70, 70)">
+    <g stroke="url(#ecoIconGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M -30 -44 L -18 -54 L -8 -54" />
+      <path d="M 10 -54 L 22 -54 L 34 -44" />
+      <path d="M -46 -26 L -54 -14 L -54 -6" />
+      <path d="M -54 10 L -54 22 L -44 34" />
+      <path d="M -30 44 L -18 54 L -8 54" />
+      <path d="M 10 54 L 22 54 L 34 44" />
+      <path d="M 46 -26 L 54 -14 L 54 -6" />
+      <path d="M 54 10 L 54 22 L 44 34" />
+      <path d="M -22 -14 L -32 -14 L -38 -24" />
+      <path d="M 22 -14 L 32 -14 L 38 -24" />
+      <path d="M 0 -24 L 0 -38" />
+      <path d="M -24 14 L -34 14 L -38 24" />
+      <path d="M 24 14 L 34 14 L 38 24" />
+      <path d="M 0 24 L 0 38" />
+    </g>
+    <circle cx="0" cy="-47" r="9" fill="#250C52" />
+    <circle cx="0" cy="-47" r="3.5" fill="#FFFFFF" />
+    <circle cx="-41" cy="-24" r="8.5" fill="#2A0F56" />
+    <circle cx="-41" cy="-24" r="3" fill="#FFFFFF" />
+    <circle cx="-41" cy="24" r="8.5" fill="#7A1D4B" />
+    <circle cx="-41" cy="24" r="3" fill="#FFFFFF" />
+    <circle cx="0" cy="47" r="9" fill="#DE6E26" />
+    <circle cx="0" cy="47" r="3.5" fill="#FFFFFF" />
+    <circle cx="41" cy="24" r="8.5" fill="#F08B22" />
+    <circle cx="41" cy="24" r="3" fill="#FFFFFF" />
+    <circle cx="41" cy="-24" r="8.5" fill="#8C2346" />
+    <circle cx="41" cy="-24" r="3" fill="#FFFFFF" />
+    <rect x="-23" y="-21" width="46" height="15" rx="2.5" fill="url(#ecoIconGrad)" />
+    <g fill="#FFFFFF">
+      <rect x="-18" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-12" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-6" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="0" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="6" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="12" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-18" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="-12" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="-6" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="0" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="6" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="12" y="-12" width="4" height="3" rx="0.5" />
+    </g>
+    <rect x="-25" y="4" width="50" height="15" rx="2.5" fill="#FFFFFF" stroke="url(#ecoIconGrad)" stroke-width="2.4" />
+    <rect x="-20" y="8" width="9" height="7" rx="1" fill="#3B1250" />
+    <circle cx="-3" cy="11.5" r="3" fill="#7D2049" />
+    <circle cx="6" cy="11.5" r="3" fill="#B64234" />
+    <circle cx="15" cy="11.5" r="3" fill="#EC8323" />
+  </g>
+</svg>

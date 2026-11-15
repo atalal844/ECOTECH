@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --eco-indigo: #250C52;
+  --eco-plum: #581849;
+  --eco-crimson: #82204A;
+  --eco-orange: #E87A24;
+  --eco-amber: #F28E20;
+  --eco-steel: #767B80;
+  --eco-bg: #F8FAFC;
+  --eco-surface: #FFFFFF;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--eco-bg);
+  color: #0F172A;
+}
+
+.eco-gradient {
+  background: linear-gradient(135deg, #250C52 0%, #7A1D4B 52%, #F08B22 100%);
+}
+
+.eco-gradient-text {
+  background: linear-gradient(135deg, #250C52 0%, #7A1D4B 52%, #F08B22 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.eco-border-gradient {
+  position: relative;
+}
+
+.eco-grid-bg {
+  background-image: linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}

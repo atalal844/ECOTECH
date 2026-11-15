@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 150" fill="none" role="img" aria-label="ECOTECH Logo">
+  <defs>
+    <linearGradient id="ecoBrandGrad" x1="0%" y1="15%" x2="100%" y2="85%">
+      <stop offset="0%" stop-color="#220B4E" />
+      <stop offset="45%" stop-color="#6E1B4B" />
+      <stop offset="78%" stop-color="#C9522B" />
+      <stop offset="100%" stop-color="#F28E20" />
+    </linearGradient>
+    <linearGradient id="ecoOGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#1E0948" />
+      <stop offset="48%" stop-color="#5B1648" />
+      <stop offset="78%" stop-color="#CF5B28" />
+      <stop offset="100%" stop-color="#F3921F" />
+    </linearGradient>
+    <linearGradient id="ecoSteelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#80858A" />
+      <stop offset="55%" stop-color="#767B80" />
+      <stop offset="100%" stop-color="#878C91" />
+    </linearGradient>
+  </defs>
+
+  <!-- Circular Network & Circuit Emblem -->
+  <g transform="translate(78, 75)">
+    <!-- Outer circuit traces -->
+    <g stroke="url(#ecoBrandGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Top & Bottom ring connectors -->
+      <path d="M -30 -44 L -18 -54 L -8 -54" />
+      <path d="M 10 -54 L 22 -54 L 34 -44" />
+      <path d="M -46 -26 L -54 -14 L -54 -6" />
+      <path d="M -54 10 L -54 22 L -44 34" />
+      <path d="M -30 44 L -18 54 L -8 54" />
+      <path d="M 10 54 L 22 54 L 34 44" />
+      <path d="M 46 -26 L 54 -14 L 54 -6" />
+      <path d="M 54 10 L 54 22 L 44 34" />
+
+      <!-- Inner trace lines connecting equipment to nodes -->
+      <path d="M -22 -14 L -32 -14 L -38 -24" />
+      <path d="M 22 -14 L 32 -14 L 38 -24" />
+      <path d="M 0 -24 L 0 -38" />
+      <path d="M -24 14 L -34 14 L -38 24" />
+      <path d="M 24 14 L 34 14 L 38 24" />
+      <path d="M 0 24 L 0 38" />
+    </g>
+
+    <!-- 6 Main Ring Nodes -->
+    <!-- Top center node (Deep Purple) -->
+    <circle cx="0" cy="-47" r="9" fill="#250C52" />
+    <circle cx="0" cy="-47" r="3.5" fill="#FFFFFF" />
+
+    <!-- Top-Left node (Indigo Purple) -->
+    <circle cx="-41" cy="-24" r="8.5" fill="#2A0F56" />
+    <circle cx="-41" cy="-24" r="3" fill="#FFFFFF" />
+
+    <!-- Bottom-Left node (Magenta Plum) -->
+    <circle cx="-41" cy="24" r="8.5" fill="#7A1D4B" />
+    <circle cx="-41" cy="24" r="3" fill="#FFFFFF" />
+
+    <!-- Bottom center node (Warm Orange) -->
+    <circle cx="0" cy="47" r="9" fill="#DE6E26" />
+    <circle cx="0" cy="47" r="3.5" fill="#FFFFFF" />
+
+    <!-- Bottom-Right node (Amber Orange) -->
+    <circle cx="41" cy="24" r="8.5" fill="#F08B22" />
+    <circle cx="41" cy="24" r="3" fill="#FFFFFF" />
+
+    <!-- Top-Right node (Crimson) -->
+    <circle cx="41" cy="-24" r="8.5" fill="#8C2346" />
+    <circle cx="41" cy="-24" r="3" fill="#FFFFFF" />
+
+    <!-- Small satellite RJ45 / port blocks on perimeter -->
+    <rect x="19" y="-49" width="12" height="9" rx="1.5" transform="rotate(28 25 -44)" fill="#581849" />
+    <rect x="-31" y="-49" width="12" height="9" rx="1.5" transform="rotate(-28 -25 -44)" fill="#290E54" />
+    <rect x="-58" y="-5" width="10" height="12" rx="1.5" fill="#46154F" />
+    <rect x="-31" y="40" width="12" height="9" rx="1.5" transform="rotate(28 -25 44)" fill="#A8353B" />
+    <rect x="19" y="40" width="12" height="9" rx="1.5" transform="rotate(-28 25 44)" fill="#EE8623" />
+    <rect x="48" y="-5" width="10" height="12" rx="1.5" fill="#D56328" />
+
+    <!-- Center Switch Module (Upper) -->
+    <rect x="-23" y="-21" width="46" height="15" rx="2.5" fill="url(#ecoBrandGrad)" />
+    <g fill="#FFFFFF">
+      <rect x="-18" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-12" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-6" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="0" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="6" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="12" y="-17" width="4" height="3" rx="0.5" />
+      <rect x="-18" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="-12" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="-6" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="0" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="6" y="-12" width="4" height="3" rx="0.5" />
+      <rect x="12" y="-12" width="4" height="3" rx="0.5" />
+    </g>
+
+    <!-- Center Smart PDU Module (Lower) -->
+    <rect x="-25" y="4" width="50" height="15" rx="2.5" fill="#FFFFFF" stroke="url(#ecoBrandGrad)" stroke-width="2.4" />
+    <rect x="-20" y="8" width="9" height="7" rx="1" fill="#3B1250" />
+    <circle cx="-3" cy="11.5" r="3" fill="#7D2049" />
+    <circle cx="6" cy="11.5" r="3" fill="#B64234" />
+    <circle cx="15" cy="11.5" r="3" fill="#EC8323" />
+  </g>
+
+  <!-- ECOTECH Bold Industrial Wordmark -->
+  <g transform="translate(154, 108)">
+    <!-- E -->
+    <path d="M 0 -70 L 54 -70 L 54 -56 L 16 -56 L 16 -42 L 48 -42 L 48 -28 L 16 -28 L 16 -14 L 55 -14 L 55 0 L 0 0 Z" fill="url(#ecoSteelGrad)" />
+    <!-- C -->
+    <path d="M 102 -71 C 117 -71 129 -64 135 -53 L 120 -46 C 116 -53 109 -57 101 -57 C 87 -57 78 -47 78 -35 C 78 -23 87 -13 101 -13 C 110 -13 117 -17 121 -24 L 136 -17 C 129 -6 117 1 102 1 C 79 1 62 -14 62 -35 C 62 -56 79 -71 102 -71 Z" fill="url(#ecoSteelGrad)" />
+    <!-- O (Signature Brand Gradient) -->
+    <path d="M 182 -71 C 206 -71 223 -56 223 -35 C 223 -14 206 1 182 1 C 158 1 141 -14 141 -35 C 141 -56 158 -71 182 -71 Z M 182 -56 C 168 -56 158 -47 158 -35 C 158 -23 168 -14 182 -14 C 196 -14 206 -23 206 -35 C 206 -47 196 -56 182 -56 Z" fill="url(#ecoOGrad)" />
+    <!-- T -->
+    <path d="M 230 -70 L 288 -70 L 288 -56 L 267 -56 L 267 0 L 251 0 L 251 -56 L 230 -56 Z" fill="url(#ecoSteelGrad)" />
+    <!-- E -->
+    <path d="M 297 -70 L 351 -70 L 351 -56 L 313 -56 L 313 -42 L 345 -42 L 345 -28 L 313 -28 L 313 -14 L 352 -14 L 352 0 L 297 0 Z" fill="url(#ecoSteelGrad)" />
+    <!-- C -->
+    <path d="M 399 -71 C 414 -71 426 -64 432 -53 L 417 -46 C 413 -53 406 -57 398 -57 C 384 -57 375 -47 375 -35 C 375 -23 384 -13 398 -13 C 407 -13 414 -17 418 -24 L 433 -17 C 426 -6 414 1 399 1 C 376 1 359 -14 359 -35 C 359 -56 376 -71 399 -71 Z" fill="url(#ecoSteelGrad)" />
+    <!-- H -->
+    <path d="M 444 -70 L 460 -70 L 460 -42 L 494 -42 L 494 -70 L 510 -70 L 510 0 L 494 0 L 494 -28 L 460 -28 L 460 0 L 444 0 Z" fill="url(#ecoSteelGrad)" />
+  </g>
+</svg>
