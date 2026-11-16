@@ -1,4 +1,4 @@
-import fs from "fs/promises";
+import { put } from "@vercel/blob";
 import path from "path";
 import {
   db,
@@ -30,10 +30,7 @@ async function writePdfToStorage(
   buffer: Buffer,
   uploadedById: number
 ) {
-  const dir = path.join(UPLOAD_ROOT, folder);
-  await fs.mkdir(dir, { recursive: true });
-  const fullPath = path.join(dir, fileName);
-  await fs.writeFile(fullPath, buffer);
+  const blob = await put(`${folder}/${fileName}`, buffer, { access: "public", contentType: "application/pdf" });
 
   const [media] = await db
     .insert(mediaLibrary)
@@ -44,8 +41,7 @@ async function writePdfToStorage(
       extension: "pdf",
       fileSize: buffer.length,
       folder,
-      storagePath: path.join(folder, fileName),
-      publicUrl: `/api/files/${folder}/${fileName}`,
+      storagePath: blob.pathname,`n      publicUrl: blob.url,
       altEn: fileName,
       altAr: fileName,
       captionEn: "ECOTECH Official Technical Documentation",
