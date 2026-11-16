@@ -3,11 +3,11 @@ import { db, websitePages } from "@/db";
 import { eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
-import { ensureDatabaseSeeded } from "@/db/seed";
+import { ensureCmsSeeded } from "@/db/seed-cms";
 
 export async function GET(request: NextRequest) {
   try {
-    await ensureDatabaseSeeded();
+    await ensureCmsSeeded();
     const slug = request.nextUrl.searchParams.get("slug");
     if (slug) {
       const [page] = await db

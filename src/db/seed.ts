@@ -1,4 +1,4 @@
-import { put } from "@vercel/blob";
+import fs from "fs/promises";
 import path from "path";
 import {
   db,
@@ -22,154 +22,6 @@ import { hashPassword } from "@/lib/auth";
 import { buildEcotechPdf } from "@/lib/pdf-generator";
 import { UPLOAD_ROOT } from "@/lib/storage";
 
-async function ensureCmsSeeded() {
-  const [{ value: secCount }] = await db.select({ value: count() }).from(homepageSections);
-  if (Number(secCount) === 0) {
-    await db.insert(homepageSections).values([
-      {
-        sectionKey: "hero",
-        titleEn: "Powering the Future of Network Infrastructure",
-        titleAr: "نقود مستقبل البنية التحتية للشبكات والطاقة الذكية",
-        subtitleEn: "Advanced Networking, Fiber Optic and Smart Power Distribution Solutions.",
-        subtitleAr: "حلول متطورة في هندسة الشبكات والألياف الضوئية وتوزيع الطاقة الذكي لمراكز البيانات.",
-        ctaPrimaryLabelEn: "Explore Products",
-        ctaPrimaryLabelAr: "استكشف المنتجات",
-        ctaPrimaryHref: "/products",
-        ctaSecondaryLabelEn: "Contact Sales",
-        ctaSecondaryLabelAr: "تواصل مع المبيعات",
-        ctaSecondaryHref: "/contact",
-        heroMediaUrl: "/images/hero-datacenter.jpg",
-        payload: {
-          catalogLabelEn: "Download Catalog",
-          catalogLabelAr: "تحميل الكتالوج",
-          catalogHref: "/api/files/catalogs/ecotech-master-catalog.pdf",
-          badgeEn: "ISO 9001:2015 • IEC 60297 • TIA-568 CERTIFIED INFRASTRUCTURE",
-          badgeAr: "بنية تحتية معتمدة وفق معايير ISO 9001:2015 و IEC 60297 و TIA-568",
-        },
-        displayOrder: 1,
-        isVisible: true,
-      },
-      {
-        sectionKey: "stats",
-        titleEn: "Engineered for Mission-Critical Uptime",
-        titleAr: "مصممة لاستمرارية الأعمال الحرجة دون انقطاع",
-        subtitleEn: "Verified manufacturing scale across enterprise and hyperscale deployments.",
-        subtitleAr: "قدرات تصنيع موثوقة لمشاريع الشركات الكبرى ومراكز البيانات.",
-        payload: {
-          items: [
-            { value: "1500 kg", labelEn: "Max Rack Static Load", labelAr: "أقصى حمولة للكبائن" },
-            { value: "±1%", labelEn: "Smart PDU Metering Accuracy", labelAr: "دقة قياس وحدات الطاقة" },
-            { value: "0.12 dB", labelEn: "Typical Fiber Insertion Loss", labelAr: "فقد الإدخال البصري" },
-            { value: "99.99%", labelEn: "Infrastructure Reliability", labelAr: "اعتمادية البنية التحتية" },
-          ],
-        },
-        displayOrder: 2,
-        isVisible: true,
-      },
-      {
-        sectionKey: "why_ecotech",
-        titleEn: "Why Choose ECOTECH",
-        titleAr: "لماذا تختار حلول إيكوتك؟",
-        subtitleEn: "Precision industrial engineering combined with end-to-end compliance and responsive technical support.",
-        subtitleAr: "هندسة صناعية دقيقة مدعومة بالامتثال للمعايير العالمية ودعم فني وهندسي متواصل.",
-        payload: {
-          cards: [
-            { titleEn: "Precision Sheet Metal & CNC Fabrication", titleAr: "تصنيع معدني دقيق بتقنيات CNC", descEn: "Automated laser cutting, CNC turret punching, and 7-stage powder coating.", descAr: "قص ليزري آلي وتشكيل CNC مع طلاء بودرة بـ 7 مراحل لمقاومة التآكل." },
-            { titleEn: "100% Factory Optical & Electrical Testing", titleAr: "اختبار مصنعي بنسبة 100% للألياف والطاقة", descEn: "Every fiber patch cord is interferometer verified and every Smart PDU undergoes full burn-in.", descAr: "يتم فحص كل كابل ألياف ضوئية وكل وحدة طاقة ذكية تحت الحمل الكامل." },
-            { titleEn: "Turnkey Data Center Customization", titleAr: "تخصيص متكامل لمراكز البيانات", descEn: "Custom dimensions, RAL colors, OEM PDU outlet layouts, and pre-terminated trunks.", descAr: "تصميم مقاسات وألوان وتوزيعات طاقة مخصصة وفق متطلبات كل مشروع." },
-            { titleEn: "Global Compliance & Fast Lead Times", titleAr: "اعتمادات عالمية وسرعة التوريد", descEn: "Full IEC, EIA-310-E, UL, CE, RoHS, and TIA-568 documentation.", descAr: "توافق كامل مع معايير IEC و EIA-310-E و UL و CE و RoHS." },
-          ],
-        },
-        displayOrder: 3,
-        isVisible: true,
-      },
-      {
-        sectionKey: "capabilities",
-        titleEn: "Engineering & Manufacturing Capabilities",
-        titleAr: "القدرات الهندسية والتصنيعية",
-        subtitleEn: "From structural CAD design and thermal CFD modeling to automated assembly.",
-        subtitleAr: "من التصميم الهندسي CAD ومحاكاة التبريد إلى خطوط التجميع الآلية.",
-        payload: { items: [] },
-        displayOrder: 4,
-        isVisible: true,
-      },
-      {
-        sectionKey: "projects",
-        titleEn: "Featured Projects & Applications",
-        titleAr: "مشاريع وتطبيقات مختارة",
-        subtitleEn: "Trusted across banking data centers, telecom hubs, smart campuses, and healthcare networks.",
-        subtitleAr: "حلولنا موثوقة في مراكز بيانات البنوك، شركات الاتصالات، الجامعات الذكية، والمستشفيات.",
-        payload: { projects: [] },
-        displayOrder: 5,
-        isVisible: true,
-      },
-      {
-        sectionKey: "certifications",
-        titleEn: "Certifications & Quality Standards",
-        titleAr: "الاعتمادات ومعايير الجودة العالمية",
-        subtitleEn: "Every ECOTECH system is engineered, tested, and certified to international benchmarks.",
-        subtitleAr: "جميع أنظمة إيكوتك مصممة ومختبرة ومعتمدة وفق أرقى المعايير الدولية.",
-        payload: {
-          badges: [
-            { code: "ISO 9001:2015", descEn: "Quality Management System", descAr: "نظام إدارة الجودة" },
-            { code: "IEC 60297", descEn: "19-Inch Mechanical Rack Standard", descAr: "معيار الكبائن الميكانيكي 19 بوصة" },
-            { code: "EIA-310-E", descEn: "Server Cabinet Structural Compliance", descAr: "توافق هياكل كبائن الخوادم" },
-            { code: "TIA-568.2-D", descEn: "Structured Cabling Performance", descAr: "معيار التمديدات الهيكلية والألياف" },
-          ],
-        },
-        displayOrder: 6,
-        isVisible: true,
-      },
-      {
-        sectionKey: "news",
-        titleEn: "Latest News & Engineering Updates",
-        titleAr: "أحدث الأخبار والتحديثات الهندسية",
-        subtitleEn: "Product launches, technical advisories, and data center infrastructure insights.",
-        subtitleAr: "إطلاقات المنتجات الجديدة، التحديثات الفنية، ورؤى البنية التحتية لمراكز البيانات.",
-        payload: { posts: [] },
-        displayOrder: 7,
-        isVisible: true,
-      },
-    ]).onConflictDoNothing();
-  }
-
-  const [{ value: pageCount }] = await db.select({ value: count() }).from(websitePages);
-  if (Number(pageCount) === 0) {
-    await db.insert(websitePages).values({
-      slug: "about-us",
-      titleEn: "Engineering Excellence in Network & Power Infrastructure",
-      titleAr: "التميز الهندسي في البنية التحتية للشبكات والطاقة",
-      subtitleEn: "ECOTECH is a specialized manufacturer of enterprise network cabinets, high-density fiber optic systems, and intelligent rack power distribution solutions.",
-      subtitleAr: "إيكوتك شركة متخصصة في تصنيع كبائن الشبكات المؤسسية وأنظمة الألياف الضوئية عالية الكثافة وحلول توزيع الطاقة الذكية.",
-      contentEn: "Founded to bridge precision industrial manufacturing with mission-critical IT requirements, ECOTECH delivers fully tested, standards-compliant infrastructure hardware.",
-      contentAr: "تأسست إيكوتك للجمع بين دقة التصنيع الصناعي ومتطلبات تقنية المعلومات الحرجة، حيث تقدم أجهزة بنية تحتية مختبرة بالكامل ومعتمدة.",
-      structuredData: {
-        visionEn: "To be the premier engineering partner for resilient, energy-efficient physical layer and power infrastructure.",
-        visionAr: "أن نكون الشريك الهندسي الأول للبنية التحتية الفيزيائية والطاقة عالية الكفاءة.",
-        missionEn: "Deliver precision-manufactured racks, ultra-low-loss optical connectivity, and intelligent power telemetry.",
-        missionAr: "تقديم كبائن مصنعة بدقة، وحلول ألياف ضوئية فائقة الأداء، ووحدات طاقة ذكية.",
-      },
-      isPublished: true,
-    }).onConflictDoNothing();
-  }
-
-  const [{ value: setCount }] = await db.select({ value: count() }).from(companySettings);
-  if (Number(setCount) === 0) {
-    await db.insert(companySettings).values([
-      { key: "company_name", valueEn: "ECOTECH Infrastructure Systems", valueAr: "إيكوتك لأنظمة البنية التحتية" },
-      { key: "contact_email", valueEn: "sales@ecotech-infra.com", valueAr: "sales@ecotech-infra.com" },
-      { key: "support_email", valueEn: "engineering@ecotech-infra.com", valueAr: "engineering@ecotech-infra.com" },
-      { key: "phone_primary", valueEn: "+971 4 555 0190", valueAr: "+971 4 555 0190" },
-      { key: "phone_sales", valueEn: "+971 4 555 0195", valueAr: "+971 4 555 0195" },
-      { key: "address", valueEn: "Plot 42, Industrial Technology Zone, Gate 3, Dubai, UAE", valueAr: "قطعة 42، المنطقة الصناعية التكنولوجية، بوابة 3، دبي، الإمارات" },
-      { key: "working_hours", valueEn: "Monday – Friday: 08:30 – 18:00 GST", valueAr: "الاثنين – الجمعة: 08:30 صباحاً – 06:00 مساءً" },
-      { key: "google_maps_embed_url", valueEn: "https://maps.google.com/maps?q=Dubai%20Industrial%20City&t=&z=13&ie=UTF8&iwloc=&output=embed", valueAr: "https://maps.google.com/maps?q=Dubai%20Industrial%20City&t=&z=13&ie=UTF8&iwloc=&output=embed" },
-      { key: "footer_about", valueEn: "ECOTECH engineers and manufactures high-reliability network racks, fiber optic connectivity, and intelligent Smart PDU power systems.", valueAr: "تصمم وتصنع إيكوتك كبائن الشبكات عالية الاعتمادية، وأنظمة الألياف الضوئية، ووحدات توزيع الطاقة الذكية." },
-      { key: "social_links", valueJson: { linkedin: "https://linkedin.com", youtube: "https://youtube.com", x: "https://x.com", instagram: "https://instagram.com" } },
-    ]).onConflictDoNothing();
-  }
-}
-
 let seedPromise: Promise<void> | null = null;
 
 async function writePdfToStorage(
@@ -178,7 +30,10 @@ async function writePdfToStorage(
   buffer: Buffer,
   uploadedById: number
 ) {
-  const blob = await put(`${folder}/${fileName}`, buffer, { access: "public", contentType: "application/pdf" });
+  const dir = path.join(UPLOAD_ROOT, folder);
+  await fs.mkdir(dir, { recursive: true });
+  const fullPath = path.join(dir, fileName);
+  await fs.writeFile(fullPath, buffer);
 
   const [media] = await db
     .insert(mediaLibrary)
@@ -189,7 +44,8 @@ async function writePdfToStorage(
       extension: "pdf",
       fileSize: buffer.length,
       folder,
-      storagePath: blob.pathname,`n      publicUrl: blob.url,
+      storagePath: path.join(folder, fileName),
+      publicUrl: `/api/files/${folder}/${fileName}`,
       altEn: fileName,
       altAr: fileName,
       captionEn: "ECOTECH Official Technical Documentation",
@@ -210,7 +66,6 @@ export async function ensureDatabaseSeeded(): Promise<void> {
       const [{ value: roleCount }] = await db
         .select({ value: count() })
         .from(userRoles);
-      await ensureCmsSeeded();
       if (Number(roleCount) > 0) {
         return;
       }

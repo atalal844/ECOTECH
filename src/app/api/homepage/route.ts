@@ -3,11 +3,11 @@ import { db, homepageSections } from "@/db";
 import { asc, eq } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
-import { ensureDatabaseSeeded } from "@/db/seed";
+import { ensureCmsSeeded } from "@/db/seed-cms";
 
 export async function GET() {
   try {
-    await ensureDatabaseSeeded();
+    await ensureCmsSeeded();
     const sections = await db
       .select()
       .from(homepageSections)
