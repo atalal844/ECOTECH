@@ -1,6 +1,6 @@
-import fs from "fs/promises";
 import path from "path";
 import crypto from "crypto";
+import { put } from "@vercel/blob";
 import {
   db,
   mediaLibrary,
@@ -10,8 +10,6 @@ import {
   homepageSections,
 } from "@/db";
 import { eq, or } from "drizzle-orm";
-
-export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
 
 export const ALLOWED_EXTENSIONS: Record<
   string,
@@ -97,7 +95,6 @@ export function validateUpload(fileName: string, mimeType: string, size: number)
       error: `File exceeds maximum size of ${Math.round(rule.maxBytes / (1024 * 1024))} MB for .${ext} files.`,
     };
   }
-  // Check MIME type when provided (allow generic octet-stream for CAD/Office/SWF)
   const cleanMime = (mimeType || "application/octet-stream").toLowerCase().split(";")[0].trim();
   if (
     cleanMime !== "application/octet-stream" &&
@@ -120,23 +117,25 @@ export async function saveBufferToStorage(params: {
   buffer: Buffer;
   originalName: string;
   folder: string;
+  contentType?: string;
 }) {
   const folder = sanitizeFolder(params.folder);
-  const targetDir = path.join(UPLOAD_ROOT, folder);
-  await fs.mkdir(targetDir, { recursive: true });
-
   const ext = path.extname(params.originalName).toLowerCase();
   const base = sanitizeFileName(path.basename(params.originalName, ext)).slice(0, 60);
   const uniqueSuffix = crypto.randomBytes(6).toString("hex");
   const fileName = `${base}-${uniqueSuffix}${ext}`;
-  const fullPath = path.join(targetDir, fileName);
+  const blobPath = `${folder}/${fileName}`;
 
-  await fs.writeFile(fullPath, params.buffer);
+  const blob = await put(blobPath, params.buffer, {
+    access: "public",
+    contentType: params.contentType,
+  });
 
   return {
     fileName,
-    storagePath: path.join(folder, fileName),
-    fullPath,
+    storagePath: blob.pathname,
+    fullPath: blob.url,
+    publicUrl: blob.url,
   };
 }
 
