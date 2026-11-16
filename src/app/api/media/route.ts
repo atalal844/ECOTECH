@@ -166,8 +166,9 @@ export async function POST(request: NextRequest) {
     });
 
     return Response.json({ uploaded, errors }, { status: 201 });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("POST /api/media error:", err);
-    return Response.json({ error: "Media upload failed" }, { status: 500 });
+    const message = err instanceof Error ? err.message : String(err);
+    return Response.json({ error: `Upload error: ${message}` }, { status: 500 });
   }
 }
