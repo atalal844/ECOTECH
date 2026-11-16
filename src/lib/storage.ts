@@ -1,3 +1,4 @@
+@'
 import path from "path";
 import crypto from "crypto";
 import { put } from "@vercel/blob";
@@ -12,7 +13,7 @@ import {
 import { eq, or } from "drizzle-orm";
 
 export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
-export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
+
 export const ALLOWED_EXTENSIONS: Record<
   string,
   { mimes: string[]; maxBytes: number; legacyArchive?: boolean }
@@ -200,3 +201,4 @@ export async function getMediaUsage(mediaId: number) {
 
   return { exists: true as const, media, usedBy };
 }
+'@ | Set-Content -Encoding UTF8 src/lib/storage.ts
