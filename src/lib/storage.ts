@@ -1,4 +1,4 @@
-@'
+$code = @'
 import path from "path";
 import crypto from "crypto";
 import { put } from "@vercel/blob";
@@ -201,4 +201,5 @@ export async function getMediaUsage(mediaId: number) {
 
   return { exists: true as const, media, usedBy };
 }
-'@ | Set-Content -Encoding UTF8 src/lib/storage.ts
+'@
+[System.IO.File]::WriteAllText("$PWD\src\lib\storage.ts", $code, (New-Object System.Text.UTF8Encoding $false))
