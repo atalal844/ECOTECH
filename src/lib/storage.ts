@@ -1,4 +1,3 @@
-$code = @'
 import path from "path";
 import crypto from "crypto";
 import { put } from "@vercel/blob";
@@ -13,7 +12,7 @@ import {
 import { eq, or } from "drizzle-orm";
 
 export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
-
+export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
 export const ALLOWED_EXTENSIONS: Record<
   string,
   { mimes: string[]; maxBytes: number; legacyArchive?: boolean }
@@ -116,31 +115,7 @@ export function validateUpload(fileName: string, mimeType: string, size: number)
   };
 }
 
-export async function saveBufferToStorage(params: {
-  buffer: Buffer;
-  originalName: string;
-  folder: string;
-  contentType?: string;
-}) {
-  const folder = sanitizeFolder(params.folder);
-  const ext = path.extname(params.originalName).toLowerCase();
-  const base = sanitizeFileName(path.basename(params.originalName, ext)).slice(0, 60);
-  const uniqueSuffix = crypto.randomBytes(6).toString("hex");
-  const fileName = `${base}-${uniqueSuffix}${ext}`;
-  const blobPath = `${folder}/${fileName}`;
-
-  const blob = await put(blobPath, params.buffer, {
-    access: "public",
-    contentType: params.contentType,
-  });
-
-  return {
-    fileName,
-    storagePath: blob.pathname,
-    fullPath: blob.url,
-    publicUrl: blob.url,
-  };
-}
+export async function saveBufferToStorage(params: { buffer: Buffer; originalName: string; folder: string; contentType?: string }) { const folder = sanitizeFolder(params.folder); const ext = path.extname(params.originalName).toLowerCase(); const base = sanitizeFileName(path.basename(params.originalName, ext)).slice(0, 60); const fileName = `-`; const blob = await put(`/`, params.buffer, { access: 'public', contentType: params.contentType }); return { fileName, storagePath: blob.pathname, fullPath: blob.url, publicUrl: blob.url }; }
 
 export async function getMediaUsage(mediaId: number) {
   const mediaRows = await db
@@ -201,5 +176,3 @@ export async function getMediaUsage(mediaId: number) {
 
   return { exists: true as const, media, usedBy };
 }
-'@
-[System.IO.File]::WriteAllText("$PWD\src\lib\storage.ts", $code, (New-Object System.Text.UTF8Encoding $false))
