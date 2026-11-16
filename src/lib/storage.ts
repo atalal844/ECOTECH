@@ -12,7 +12,6 @@ import {
 import { eq, or } from "drizzle-orm";
 
 export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
-export const UPLOAD_ROOT = path.resolve(process.cwd(), "storage", "uploads");
 export const ALLOWED_EXTENSIONS: Record<
   string,
   { mimes: string[]; maxBytes: number; legacyArchive?: boolean }
