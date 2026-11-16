@@ -1,11 +1,11 @@
 import { NextRequest } from "next/server";
+import { put } from "@vercel/blob";
 import { db, mediaLibrary } from "@/db";
 import { and, desc, eq, ilike, or } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import {
   validateUpload,
-  saveBufferToStorage,
   sanitizeFolder,
   getMediaUsage,
 } from "@/lib/storage";
@@ -116,27 +116,25 @@ export async function POST(request: NextRequest) {
         continue;
       }
 
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-      const saved = await saveBufferToStorage({
-        buffer,
-        originalName: file.name,
-        folder,
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const blob = await put(`${folder}/${safeName}`, file, {
+        access: "public",
+        addRandomSuffix: true,
       });
 
-      const publicUrl = `/api/files/${folder}/${saved.fileName}`;
+      const storedFileName = blob.pathname.split("/").pop() || safeName;
 
       const [record] = await db
         .insert(mediaLibrary)
         .values({
-          fileName: saved.fileName,
+          fileName: storedFileName,
           originalName: file.name,
           mimeType: check.mimeType,
           extension: check.extension,
           fileSize: file.size,
           folder,
-          storagePath: saved.storagePath,
-          publicUrl,
+          storagePath: blob.pathname,
+          publicUrl: blob.url,
           altEn: altEn || file.name,
           altAr: altAr || file.name,
           captionEn,
