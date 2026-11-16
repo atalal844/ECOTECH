@@ -22,6 +22,7 @@ import { UI_LABELS, pickText } from "@/lib/i18n";
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { ProductCard } from "@/components/public/ProductCard";
+import { HeroProductShowcase } from "@/components/public/HeroProductShowcase";
 import { InquiryForm } from "@/components/public/InquiryForm";
 
 export const dynamic = "force-dynamic";
@@ -146,20 +147,13 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Hero Industrial Video Frame */}
+            {/* Hero Interactive Product Showcase */}
             <div className="relative lg:col-span-6">
               <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl">
-                <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-950">
-                  <video
-                    src="/videos/hero-video.mp4"
-                    poster="/images/hero-datacenter.jpg"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                <HeroProductShowcase
+                  products={home.featuredProducts}
+                  lang={lang}
+                />
                 <div className="mt-2 grid grid-cols-3 gap-2 rounded-2xl bg-slate-50 p-3 text-center">
                   <div>
                     <div className="text-xs font-bold text-[#250C52]">
