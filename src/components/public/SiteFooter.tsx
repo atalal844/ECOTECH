@@ -174,9 +174,6 @@ export function SiteFooter({ lang, categories, settings }: SiteFooterProps) {
             <Link href="/sitemap.xml" className="hover:text-slate-800">
               XML Sitemap
             </Link>
-            <Link href="/admin" className="hover:text-slate-800">
-              {t.adminPortal}
-            </Link>
           </div>
         </div>
       </div>
