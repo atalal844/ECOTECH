@@ -170,13 +170,13 @@ export default async function ServiceDetailPage({
                   className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#F08B22] to-[#e0701a] px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:opacity-95"
                 >
                   <Phone className="h-4 w-4" />
-                  {lang === "ar" ? "تواصل معانا" : "Contact us"}
+                  {lang === "ar" ? "تواصل معنا" : "Contact us"}
                 </a>
                 <a
                   href={`#${p.blocks[0].id}`}
                   className="inline-flex items-center gap-2 rounded-xl border border-white/30 bg-white/5 px-6 py-3 text-sm font-bold text-white transition hover:bg-white/15"
                 >
-                  {lang === "ar" ? "اعرف أكتر" : "Learn more"}
+                  {lang === "ar" ? "اعرف المزيد" : "Learn more"}
                   <ArrowIcon className="h-4 w-4" />
                 </a>
               </div>
