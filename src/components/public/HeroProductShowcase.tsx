@@ -220,7 +220,6 @@ export function CinematicIntro(props: CinematicIntroProps) {
             {props.catalogHref && <a className="eco-intro-secondary" href={props.catalogHref} target="_blank" rel="noopener noreferrer">{ar ? "تحميل الكتالوج" : "Download catalog"}</a>}
           </div>
         </div>
-        <p className="eco-intro-credit">{ar ? "صور توضيحية من" : "Illustrative photography:"} <a href="https://www.pexels.com/photo/black-server-racks-4508751/" target="_blank" rel="noopener noreferrer">Brett Sayles / Pexels</a></p>
         <div className="eco-intro-bottom">
           <div className="eco-intro-topics"><span><i>01</i>{ar ? "البنية التحتية" : "Infrastructure"}</span><span><i>02</i>{ar ? "الاتصال" : "Connectivity"}</span><span><i>03</i>{ar ? "الطاقة الذكية" : "Intelligent power"}</span></div>
           <button className="eco-intro-motion" type="button" onClick={() => setPaused(v => !v)} aria-pressed={paused}>
