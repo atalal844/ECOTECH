@@ -15,6 +15,79 @@ import { asc, desc, eq, inArray } from "drizzle-orm";
 import { ensureDatabaseSeeded } from "@/db/seed";
 import type { Lang } from "./i18n";
 
+// Contact data approved by the owner from https://ecotel.holdings/contact-us/.
+// Keep this review branch independent of shared production database settings.
+export const VERIFIED_CONTACT_OFFICES = [
+  {
+    "country": "EGYPT",
+    "address": "20 Sayed Zakaria Khaleel St.,Masaken Sheraton,",
+    "phones": [
+      "+2 (02) 2269 5345",
+      "+2 (02) 2269 5340"
+    ]
+  },
+  {
+    "country": "JORDAN",
+    "address": "190 Zahran st,Amman",
+    "phones": [
+      "+962 77 900 7000"
+    ]
+  },
+  {
+    "country": "Saudi Arabia",
+    "address": "7069 Hital Tower King Fahd Road , Al Sahafa Dist. Riyadh 13315 - 2416 Kingdom of Saudi Arabia",
+    "phones": [
+      "+966 56 985 5716"
+    ]
+  }
+];
+
+const verifiedContactSettings = {
+  "contact_email": {
+    "en": "info@ecotelholding.com",
+    "ar": "info@ecotelholding.com",
+    "json": null
+  },
+  "support_email": {
+    "en": "",
+    "ar": "",
+    "json": null
+  },
+  "phone_primary": {
+    "en": "+2 (02) 2269 5345",
+    "ar": "+2 (02) 2269 5345",
+    "json": null
+  },
+  "phone_sales": {
+    "en": "+2 (02) 2269 5340",
+    "ar": "+2 (02) 2269 5340",
+    "json": null
+  },
+  "address": {
+    "en": "20 Sayed Zakaria Khaleel St.,Masaken Sheraton,",
+    "ar": "20 Sayed Zakaria Khaleel St.,Masaken Sheraton,",
+    "json": null
+  },
+  "working_hours": {
+    "en": "",
+    "ar": "",
+    "json": null
+  },
+  "google_maps_embed_url": {
+    "en": "https://maps.google.com/maps?q=30.103497898646612%2C%2031.372872427990778&t=m&z=18&output=embed&iwloc=near",
+    "ar": "https://maps.google.com/maps?q=30.103497898646612%2C%2031.372872427990778&t=m&z=18&output=embed&iwloc=near",
+    "json": null
+  },
+  "social_links": {
+    "en": "",
+    "ar": "",
+    "json": {
+      "facebook": "https://www.facebook.com/Ecotelholding",
+      "linkedin": "https://www.linkedin.com/company/ecotel-holding?trk=top_nav_home"
+    }
+  }
+};
+
 export async function getServerLang(): Promise<Lang> {
   const cookieStore = await cookies();
   return cookieStore.get("ecotech_lang")?.value === "ar" ? "ar" : "en";
@@ -45,6 +118,9 @@ export async function getPublicSiteChrome() {
       json: s.valueJson || null,
     };
   }
+
+  // Override the seeded contact placeholders without mutating the database.
+  Object.assign(settings, verifiedContactSettings);
 
   return {
     categories: cats,
@@ -202,4 +278,4 @@ export async function getAboutPageData() {
     .where(eq(websitePages.slug, "about-us"))
     .limit(1);
   return page || null;
-}
+                               }
