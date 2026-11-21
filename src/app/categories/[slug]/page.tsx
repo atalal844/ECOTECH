@@ -44,7 +44,7 @@ export default async function CategoryPage({
     .from(products)
     .where(
       and(
-        eq(products.status, "published"),
+        inArray(products.status, ["published", "draft"]),
         inArray(products.categoryId, matchingCatIds)
       )
     )
@@ -55,7 +55,7 @@ export default async function CategoryPage({
     .from(products)
     .where(
       and(
-        eq(products.status, "published"),
+        inArray(products.status, ["published", "draft"]),
         ne(products.categoryId, category.id)
       )
     )
