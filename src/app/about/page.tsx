@@ -83,7 +83,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-12 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-12 sm:px-6">
         {/* Company Overview */}
         <section className="grid grid-cols-1 items-center gap-8 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 lg:grid-cols-12">
           <div className="space-y-4 lg:col-span-7">
