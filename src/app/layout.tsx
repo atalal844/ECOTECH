@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { FloatingContact } from "@/components/public/FloatingContact";
 import type { ReactNode } from "react";
+import type React from "react";
 import { cookies } from "next/headers";
 import { Plus_Jakarta_Sans, IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
+import { getWatermark } from "@/lib/watermark-store";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -45,6 +47,10 @@ export const metadata: Metadata = {
   },
 };
 
+const WM_IMG = ':is(a,div,figure,picture):has(> img:is(.object-cover,.object-contain):not([src*="logo"]):not([src*="placeholder"]))';
+const WM_CSS = `@layer base{html[data-wm="on"] ${WM_IMG}{position:relative}}
+html[data-wm="on"] ${WM_IMG}::after,html[data-wm="on"] .eco-intro-photos::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:url(/ecotech-logo.svg) center/92% auto no-repeat;opacity:var(--wm-opacity,.25);filter:drop-shadow(0 0 3px rgba(255,255,255,.55))}`;
+
 export default async function RootLayout({
   children,
 }: {
@@ -52,11 +58,14 @@ export default async function RootLayout({
 }) {
   const cookieStore = await cookies();
   const lang = cookieStore.get("ecotech_lang")?.value === "ar" ? "ar" : "en";
+  const wm = await getWatermark();
 
   return (
     <html
       lang={lang}
       dir={lang === "ar" ? "rtl" : "ltr"}
+      data-wm={wm.enabled ? "on" : "off"}
+      style={{ "--wm-opacity": String(wm.opacity / 100) } as React.CSSProperties}
       className={`${jakarta.variable} ${plexArabic.variable}`}
     >
       <body
@@ -67,6 +76,7 @@ export default async function RootLayout({
         }`}
       >
         <a href="#main-content" className="skip-link">{lang === "ar" ? "انتقل إلى المحتوى" : "Skip to content"}</a>
+        <style dangerouslySetInnerHTML={{ __html: WM_CSS }} />
         {children}
         <FloatingContact lang={lang} />
       </body>
