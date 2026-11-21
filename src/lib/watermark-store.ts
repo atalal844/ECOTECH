@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 
 export const WATERMARK_SETTING_KEY = "watermark";
 export type WatermarkSettings = { enabled: boolean; opacity: number };
-export const WATERMARK_DEFAULT: WatermarkSettings = { enabled: true, opacity: 25 };
+export const WATERMARK_DEFAULT: WatermarkSettings = { enabled: true, opacity: 45 };
 
 export function cleanWatermark(v: unknown): WatermarkSettings {
   const o = (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
