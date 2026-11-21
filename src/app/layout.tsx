@@ -18,7 +18,12 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://ecotech-ecotech6.vercel.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://ecotech-ecotech6.vercel.app")
+  ),
   title: {
     default: "ECOTECH | Networking Infrastructure & Smart Power Solutions",
     template: "%s | ECOTECH",
