@@ -64,10 +64,15 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
   const [showDropdown, setShowDropdown] = useState(false);
   const searchBoxRef = useRef<HTMLDivElement>(null);
 
+  const navMenus = menus.length ? menus : [
+    { id: -1, labelEn: "Products", labelAr: "المنتجات", href: "/products" },
+    { id: -2, labelEn: "About", labelAr: "عن الشركة", href: "/about" },
+    { id: -3, labelEn: "Contact", labelAr: "تواصل معنا", href: "/contact" },
+  ];
   const topCategories = categories.filter((c) => !c.parentId);
   const contactEmail = settings.contact_email?.en || "";
   const phonePrimary = settings.phone_primary?.en || "";
-  const catalogUrl = settings.master_catalog_url?.en || "/products";
+  const catalogUrl = settings.master_catalog_url?.en || "";
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -81,14 +86,13 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
 
   useEffect(() => {
     const q = searchQuery.trim();
-    if (q.length < 2) {
-      setSuggestions([]);
-      return;
-    }
+    if (q.length < 2) return;
+    const controller = new AbortController();
     const timer = setTimeout(async () => {
       try {
         const res = await fetch(
-          `/api/products?autocomplete=1&q=${encodeURIComponent(q)}`
+          `/api/products?autocomplete=1&q=${encodeURIComponent(q)}`,
+          { signal: controller.signal }
         );
         if (res.ok) {
           const data = await res.json();
@@ -99,7 +103,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
         // ignore transient errors
       }
     }, 220);
-    return () => clearTimeout(timer);
+    return () => { clearTimeout(timer); controller.abort(); };
   }, [searchQuery]);
 
   async function toggleLanguage(nextLang: Lang) {
@@ -148,7 +152,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
           </div>
 
           <div className="flex items-center gap-4">
-            <a
+            {catalogUrl && catalogUrl !== "/products" && <a
               href={catalogUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -156,7 +160,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
             >
               <FileDown className="h-3.5 w-3.5" />
               <span>{t.downloadCatalog}</span>
-            </a>
+            </a>}
             <Link
               href="/admin"
               className="flex items-center gap-1 text-slate-300 transition hover:text-white"
@@ -199,13 +203,13 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
           <img
             src="/ecotech-logo.svg"
             alt="ECOTECH Logo"
-            className="h-9 w-auto sm:h-11"
+            className="h-auto w-40 sm:w-48"
           />
         </Link>
 
         {/* Desktop Nav Links + Mega Menu Trigger */}
         <nav className="hidden items-center gap-1 lg:flex">
-          {menus.map((item) => {
+          {navMenus.map((item) => {
             const isProducts = item.href === "/products";
             if (isProducts) {
               return (
@@ -293,10 +297,11 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
         <div ref={searchBoxRef} className="relative hidden flex-1 max-w-sm md:block">
           <form onSubmit={handleSearchSubmit} className="relative">
             <input
+              aria-label={t.searchPlaceholder}
               type="search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => suggestions.length > 0 && setShowDropdown(true)}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(false); }}
+              onFocus={() => searchQuery.trim().length >= 2 && suggestions.length > 0 && setShowDropdown(true)}
               placeholder={t.searchPlaceholder}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pe-10 ps-4 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-[#7A1D4B] focus:bg-white focus:ring-2 focus:ring-[#7A1D4B]/15"
             />
@@ -309,7 +314,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
             </button>
           </form>
 
-          {showDropdown && (
+          {showDropdown && searchQuery.trim().length >= 2 && (
             <div className="absolute top-full z-50 mt-2 w-full overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
               {suggestions.length === 0 ? (
                 <div className="px-4 py-3 text-xs text-slate-500">
@@ -353,7 +358,9 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Toggle Menu"
+            aria-label={lang === "ar" ? "القائمة" : "Toggle menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
             className="rounded-lg border border-slate-200 p-2 text-slate-700 lg:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -363,17 +370,19 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
 
       {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="border-t border-slate-200 bg-white px-4 py-4 lg:hidden">
+        <div id="mobile-navigation" className="border-t border-slate-200 bg-white px-4 py-4 lg:hidden">
           <form onSubmit={handleSearchSubmit} className="relative mb-4">
             <input
+              aria-label={t.searchPlaceholder}
               type="search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => { setSearchQuery(e.target.value); setShowDropdown(false); }}
               placeholder={t.searchPlaceholder}
               className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pe-10 ps-4 text-sm outline-none"
             />
             <button
               type="submit"
+              aria-label={lang === "ar" ? "بحث" : "Search"}
               className="absolute inset-y-0 end-0 px-3 text-slate-500"
             >
               <Search className="h-4 w-4" />
@@ -381,7 +390,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
           </form>
 
           <div className="space-y-1">
-            {menus.map((m) => (
+            {navMenus.map((m) => (
               <Link
                 key={m.id}
                 href={m.href}
