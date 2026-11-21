@@ -1,4 +1,5 @@
 import React from "react";
+import { pageMetadata } from "@/lib/seo";
 import { db, products, productCategories, productImages, productSpecifications } from "@/db";
 import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { getServerLang, getPublicSiteChrome } from "@/lib/public-data";
@@ -8,6 +9,10 @@ import { SiteFooter } from "@/components/public/SiteFooter";
 import { ProductCatalogClient } from "@/components/public/ProductCatalogClient";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return pageMetadata("products");
+}
 
 export default async function ProductsPage({
   searchParams,
