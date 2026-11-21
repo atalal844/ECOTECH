@@ -74,7 +74,7 @@ export default async function ContactPage({
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-12 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-12 sm:px-6">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           {/* Contact Information Cards */}
           <div className="space-y-5 lg:col-span-5">
