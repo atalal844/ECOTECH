@@ -1,18 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { Phone, Copy, Check, FileText } from "lucide-react";
+import { Phone, Send, CheckCircle2 } from "lucide-react";
 import type { Lang } from "@/lib/i18n";
 
 const WHATSAPP = "201155404444";
+
+const ADMIN_LABEL: Record<string, string> = {
+  storage: "Storage",
+  "storage-inventory": "Storage & inventory management",
+  fiber: "Fiber maintenance & testing",
+  undecided: "Service not decided",
+};
 
 export type ServiceKey = "storage" | "storage-inventory" | "fiber" | "undecided";
 
 const COPY = {
   en: {
-    title: "Prepare your inquiry",
+    title: "Send your inquiry",
     intro: [
       "Your name or company",
+      "Phone number and email",
       "Goods or fiber cable details and quantity",
       "Storage period or preferred timing",
       "Service needed",
@@ -27,15 +35,22 @@ const COPY = {
       fiber: "Fiber maintenance & testing",
       undecided: "Still deciding",
     },
-    review: "Review inquiry summary",
-    copy: "Copy inquiry",
-    copied: "Copied",
-    whatsapp: "Open WhatsApp",
+    phone: "Phone / WhatsApp number",
+    email: "Email",
+    country: "Country",
+    defaultCountry: "Egypt",
+    send: "Send inquiry",
+    sending: "Sending...",
+    whatsapp: "Send via WhatsApp instead",
     disclosure:
-      "This form only prepares text. It does not send or save your details. Copy the summary and send it yourself on WhatsApp.",
+      "Your inquiry is saved and sent to our team, who will contact you. You can also send it by WhatsApp.",
     required:
-      "Please enter a name, requirements and timing to prepare a useful summary.",
-    summaryTitle: "Inquiry summary",
+      "Please enter your name, phone, a valid email, country, requirements and timing.",
+    failed: "We could not send your inquiry. Please try again or use WhatsApp.",
+    successTitle: "Thank you, your inquiry was received.",
+    successRef: "Reference number",
+    successNote: "Our team will contact you soon.",
+    another: "Send another inquiry",
     labels: {
       name: "Name / company",
       details: "Details and quantity",
@@ -48,9 +63,10 @@ const COPY = {
     tel: "+201155404444",
   },
   ar: {
-    title: "جهّز استفسارك",
+    title: "أرسلوا استفساركم",
     intro: [
       "الاسم أو اسم الشركة",
+      "رقم الهاتف والبريد الإلكتروني",
       "نوع البضاعة أو تفاصيل الكابل والكمية",
       "المدة أو الموعد المطلوب",
       "الخدمة المطلوبة",
@@ -65,14 +81,22 @@ const COPY = {
       fiber: "صيانة واختبار ألياف ضوئية",
       undecided: "لم أحدد بعد",
     },
-    review: "عرض ملخص الاستفسار",
-    copy: "نسخ الاستفسار",
-    copied: "تم النسخ",
-    whatsapp: "فتح واتساب",
+    phone: "رقم الهاتف / واتساب",
+    email: "البريد الإلكتروني",
+    country: "الدولة",
+    defaultCountry: "مصر",
+    send: "إرسال الاستفسار",
+    sending: "جارٍ الإرسال...",
+    whatsapp: "الإرسال عبر واتساب بدلًا من ذلك",
     disclosure:
-      "يقتصر هذا النموذج على إعداد نص الرسالة، ولا يرسل بياناتكم ولا يحفظها. انسخوا الملخص وأرسلوه بأنفسكم عبر واتساب.",
-    required: "يرجى ملء الاسم والتفاصيل والمدة أولًا لنُعدّ ملخصًا مفيدًا.",
-    summaryTitle: "ملخص الاستفسار",
+      "يُحفظ استفساركم ويصل إلى فريقنا ليتواصل معكم. ويمكنكم أيضًا إرساله عبر واتساب.",
+    required:
+      "يرجى إدخال الاسم ورقم الهاتف وبريد إلكتروني صحيح والدولة والتفاصيل والمدة.",
+    failed: "تعذّر إرسال استفساركم. يرجى المحاولة مرة أخرى أو استخدام واتساب.",
+    successTitle: "شكرًا لكم، تم استلام استفساركم.",
+    successRef: "الرقم المرجعي",
+    successNote: "سيتواصل معكم فريقنا قريبًا.",
+    another: "إرسال استفسار آخر",
     labels: {
       name: "الاسم / الشركة",
       details: "التفاصيل والكمية",
@@ -98,17 +122,65 @@ export function ServicesInquiry({
   const [details, setDetails] = useState("");
   const [timing, setTiming] = useState("");
   const [service, setService] = useState<ServiceKey>(defaultService);
-  const [summary, setSummary] = useState("");
-  const [error, setError] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [done, setDone] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [country, setCountry] = useState(c.defaultCountry as string);
+  const [error, setError] = useState<"" | "required" | "failed">("");
+  const [busy, setBusy] = useState(false);
+  const [ref, setRef] = useState("");
 
-  function build(): string | null {
-    if (!name.trim() || !details.trim() || !timing.trim()) {
-      setError(true);
-      setSummary("");
-      return null;
+  function valid() {
+    return (
+      name.trim().length >= 2 &&
+      phone.trim().length >= 5 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) &&
+      country.trim().length >= 2 &&
+      details.trim().length >= 2 &&
+      timing.trim().length >= 1
+    );
+  }
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!valid()) {
+      setError("required");
+      return;
     }
-    setError(false);
+    setError("");
+    setBusy(true);
+    try {
+      const message = `${details.trim()}\n\nPeriod / timing: ${timing.trim()}`;
+      const res = await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          inquiryType: "service",
+          customerName: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          country: country.trim(),
+          productNameSnapshot: `Service: ${ADMIN_LABEL[service]}`,
+          message: message.length < 5 ? message + "....." : message,
+        }),
+      });
+      if (!res.ok) throw new Error("bad");
+      const data = await res.json();
+      setRef(data?.inquiry?.referenceCode || "");
+      setDone(true);
+    } catch {
+      setError("failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function openWhatsApp() {
+    if (!valid()) {
+      setError("required");
+      return;
+    }
+    setError("");
     const text = [
       c.header,
       `${c.labels.name}: ${name.trim()}`,
@@ -116,25 +188,6 @@ export function ServicesInquiry({
       `${c.labels.timing}: ${timing.trim()}`,
       `${c.labels.service}: ${c.options[service]}`,
     ].join("\n");
-    setSummary(text);
-    return text;
-  }
-
-  async function copyText() {
-    const text = build();
-    if (!text) return;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // clipboard blocked: the summary stays visible for manual copy
-    }
-  }
-
-  function openWhatsApp() {
-    const text = build();
-    if (!text) return;
     window.open(
       `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`,
       "_blank",
@@ -175,109 +228,99 @@ export function ServicesInquiry({
       </div>
 
       <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7 lg:col-span-7">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={label} htmlFor="svc-name">
-              {c.name}
-            </label>
-            <input
-              id="svc-name"
-              className={field}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={label} htmlFor="svc-service">
-              {c.service}
-            </label>
-            <select
-              id="svc-service"
-              className={field}
-              value={service}
-              onChange={(e) => setService(e.target.value as ServiceKey)}
-            >
-              {(Object.keys(c.options) as ServiceKey[]).map((k) => (
-                <option key={k} value={k}>
-                  {c.options[k]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="sm:col-span-2">
-            <label className={label} htmlFor="svc-details">
-              {c.details}
-            </label>
-            <textarea
-              id="svc-details"
-              rows={3}
-              className={field}
-              value={details}
-              onChange={(e) => setDetails(e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <label className={label} htmlFor="svc-timing">
-              {c.timing}
-            </label>
-            <input
-              id="svc-timing"
-              className={field}
-              value={timing}
-              onChange={(e) => setTiming(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <p className="mt-4 rounded-xl bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-200">
-          {c.disclosure}
-        </p>
-
-        {error && (
-          <p role="alert" className="mt-3 text-sm font-semibold text-red-700">
-            {c.required}
-          </p>
-        )}
-
-        <div className="mt-5 flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={build}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#250C52] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#33106e]"
-          >
-            <FileText className="h-4 w-4 text-[#F08B22]" />
-            {c.review}
-          </button>
-          <button
-            type="button"
-            onClick={copyText}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:border-[#7A1D4B]"
-          >
-            {copied ? (
-              <Check className="h-4 w-4 text-emerald-600" />
-            ) : (
-              <Copy className="h-4 w-4" />
+        {done ? (
+          <div className="space-y-4 py-6 text-center" role="status">
+            <CheckCircle2 className="mx-auto h-12 w-12 text-emerald-600" />
+            <h3 className="text-xl font-extrabold text-slate-950">{c.successTitle}</h3>
+            {ref && (
+              <p className="text-sm text-slate-700">
+                {c.successRef}:{" "}
+                <span dir="ltr" className="inline-block font-bold">
+                  {ref}
+                </span>
+              </p>
             )}
-            {copied ? c.copied : c.copy}
-          </button>
-          <button
-            type="button"
-            onClick={openWhatsApp}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:brightness-95"
-          >
-            {c.whatsapp}
-          </button>
-        </div>
-
-        {summary && (
-          <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 text-xs font-bold uppercase tracking-wider text-[#7A1D4B]">
-              {c.summaryTitle}
-            </div>
-            <pre className="whitespace-pre-wrap break-words font-[inherit] text-sm leading-relaxed text-slate-800">
-              {summary}
-            </pre>
+            <p className="text-sm text-slate-600">{c.successNote}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setDone(false);
+                setName("");
+                setDetails("");
+                setTiming("");
+                setPhone("");
+                setEmail("");
+              }}
+              className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:border-[#7A1D4B]"
+            >
+              {c.another}
+            </button>
           </div>
+        ) : (
+          <form onSubmit={submit} noValidate>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={label} htmlFor="svc-name">{c.name}</label>
+                <input id="svc-name" className={field} value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
+              </div>
+              <div>
+                <label className={label} htmlFor="svc-service">{c.service}</label>
+                <select id="svc-service" className={field} value={service} onChange={(e) => setService(e.target.value as ServiceKey)}>
+                  {(Object.keys(c.options) as ServiceKey[]).map((k) => (
+                    <option key={k} value={k}>{c.options[k]}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className={label} htmlFor="svc-phone">{c.phone}</label>
+                <input id="svc-phone" type="tel" dir="ltr" className={field} value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+              </div>
+              <div>
+                <label className={label} htmlFor="svc-email">{c.email}</label>
+                <input id="svc-email" type="email" dir="ltr" className={field} value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className={label} htmlFor="svc-country">{c.country}</label>
+                <input id="svc-country" className={field} value={country} onChange={(e) => setCountry(e.target.value)} autoComplete="country-name" />
+              </div>
+              <div className="sm:col-span-2">
+                <label className={label} htmlFor="svc-details">{c.details}</label>
+                <textarea id="svc-details" rows={3} className={field} value={details} onChange={(e) => setDetails(e.target.value)} />
+              </div>
+              <div className="sm:col-span-2">
+                <label className={label} htmlFor="svc-timing">{c.timing}</label>
+                <input id="svc-timing" className={field} value={timing} onChange={(e) => setTiming(e.target.value)} />
+              </div>
+            </div>
+
+            <p className="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-xs leading-relaxed text-slate-600 ring-1 ring-slate-200">
+              {c.disclosure}
+            </p>
+
+            {error && (
+              <p role="alert" className="mt-3 text-sm font-semibold text-red-700">
+                {error === "required" ? c.required : c.failed}
+              </p>
+            )}
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <button
+                type="submit"
+                disabled={busy}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#250C52] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#33106e] disabled:opacity-60"
+              >
+                <Send className="h-4 w-4 text-[#F08B22]" />
+                {busy ? c.sending : c.send}
+              </button>
+              <button
+                type="button"
+                onClick={openWhatsApp}
+                className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition hover:brightness-95"
+              >
+                {c.whatsapp}
+              </button>
+            </div>
+          </form>
         )}
       </div>
     </div>
