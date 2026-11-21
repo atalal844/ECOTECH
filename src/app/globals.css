@@ -76,7 +76,7 @@ body {
 .eco-intro-racks {animation:eco-intro-float 10s ease-in-out infinite;}
 .eco-intro-scan {animation:eco-intro-scan 7s ease-in-out infinite; opacity:.5;}
 .eco-intro-orbit {transform-origin:570px 355px; animation:eco-intro-orbit 50s linear infinite;}
-.eco-intro[data-paused="true"] .eco-intro-art * {animation-play-state:paused!important;}
+.eco-intro[data-paused="true"] .eco-intro-photos * {animation-play-state:paused!important;}
 [dir="rtl"] .eco-intro-art {inset-inline-end:auto; left:-9%; mask-image:linear-gradient(270deg,transparent,#000 23%);}
 [dir="rtl"] .eco-intro h1 {letter-spacing:0; line-height:1.4; font-size:clamp(34px,4vw,54px);}
 [dir="rtl"] .eco-intro-eyebrow {letter-spacing:0; font-size:12px;}
@@ -107,4 +107,29 @@ body {
  .eco-intro *, .eco-intro *::before {animation:none!important; transition:none!important;}
  .eco-intro-motion {display:none;}
  .eco-intro-scan {opacity:0;}
-                    }
+}
+
+/* Photographic edition: real interiors, racks and cabling, 27-second sequence. */
+.eco-intro-photos {position:absolute; inset:0; z-index:-1; overflow:hidden;}
+.eco-intro-photo {position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:65% center; opacity:0; animation:eco-photo-sequence 27s linear infinite; will-change:transform,opacity;}
+.eco-intro-photo-0 {opacity:1; animation-delay:0s;}
+.eco-intro-photo-1 {animation-delay:9s;}
+.eco-intro-photo-2 {animation-delay:18s;}
+.eco-intro-photo-shade {position:absolute; inset:0; background:linear-gradient(90deg,rgba(12,6,25,.93) 0%,rgba(19,9,38,.83) 25%,rgba(23,9,40,.35) 66%,rgba(15,9,29,.12)),linear-gradient(0deg,rgba(14,7,28,.75),transparent 40%);}
+[dir="rtl"] .eco-intro-photo-shade {background:linear-gradient(270deg,rgba(12,6,25,.93),rgba(19,9,38,.83) 25%,rgba(23,9,40,.35) 66%,rgba(15,9,29,.12)),linear-gradient(0deg,rgba(14,7,28,.75),transparent 40%);}
+.eco-intro-light-trail {position:absolute; bottom:0; inset-inline-start:-30%; height:1px; width:35%; background:linear-gradient(90deg,transparent,#f08b22,transparent); opacity:.55; animation:eco-photo-trail 8s linear infinite;}
+.eco-intro-credit {position:absolute; bottom:83px; inset-inline-end:40px; font-size:9px; color:#ddd2e5; background:#160c25aa; border-radius:4px; padding:5px 8px;}
+.eco-intro-credit a {text-decoration:underline; text-underline-offset:2px;}
+.eco-intro-bottom {margin-top:20px;}
+@keyframes eco-photo-sequence {0%{opacity:0;transform:scale(1)}5%,30%{opacity:1}37%,100%{opacity:0;transform:scale(1.09)}}
+@keyframes eco-photo-trail {to{transform:translateX(500%)}}
+@media(max-width:767px) {
+ .eco-intro-inner {min-height:700px; gap:145px; padding-bottom:22px;}
+ .eco-intro-photo {object-position:62% center;}
+ .eco-intro-photo-shade,[dir="rtl"] .eco-intro-photo-shade {background:linear-gradient(180deg,rgba(13,6,26,.92),rgba(21,10,38,.82) 38%,rgba(21,10,38,.15) 76%,rgba(14,7,28,.88));}
+ .eco-intro-credit {inset-inline-end:22px; bottom:115px; font-size:8px;}
+}
+@media(prefers-reduced-motion:reduce) {
+ .eco-intro-photo {opacity:0!important; will-change:auto;}
+ .eco-intro-photo-0 {opacity:1!important;}
+                   }
