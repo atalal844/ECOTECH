@@ -31,9 +31,11 @@ export interface ProductCardItem {
 export function ProductCard({
   product,
   lang,
+  horizontal = false,
 }: {
   product: ProductCardItem;
   lang: Lang;
+  horizontal?: boolean;
 }) {
   const t = UI_LABELS[lang];
   const isRtl = lang === "ar";
@@ -59,16 +61,16 @@ export function ProductCard({
   };
 
   const avail =
-    availabilityMap[product.availabilityStatus] || availabilityMap.in_stock;
+    availabilityMap[product.availabilityStatus] || { label: lang === "ar" ? "تحقق من التوفر" : "Check availability", cls: "bg-slate-100 text-slate-600 border-slate-200" };
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl">
+    <article className={`group flex flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl ${horizontal ? "md:grid md:grid-cols-2" : ""}`}>
       <Link
         href={`/products/${product.slug}`}
-        className="relative block aspect-[4/3] overflow-hidden bg-slate-100"
+        className={`relative block aspect-[4/3] overflow-hidden bg-slate-100 ${horizontal ? "md:aspect-auto md:min-h-72" : ""}`}
       >
         <img
-          src={product.primaryImage?.url || "/images/cat-racks.jpg"}
+          src={product.primaryImage?.url || "/product-placeholder.svg"}
           alt={pickText(
             lang,
             product.primaryImage?.altEn || product.nameEn,
