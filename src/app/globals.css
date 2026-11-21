@@ -48,3 +48,63 @@ body {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+
+/* Original ECOTECH cinematic network intro. CSS/SVG only, no autoplay media. */
+.eco-intro { position:relative; isolation:isolate; overflow:hidden; background:#100a20; color:#fff; }
+.eco-intro-grain {position:absolute; inset:0; pointer-events:none; z-index:-1; background:radial-gradient(ellipse at 82% 10%,#45206388,transparent 55%),linear-gradient(115deg,#100a20 16%,#160c2a 55%,#241035);}
+.eco-intro-art {position:absolute; width:78%; height:100%; inset-inline-end:-9%; top:0; z-index:-1; opacity:.95; mask-image:linear-gradient(90deg,transparent,#000 23%);}
+.eco-intro-art svg {height:100%; width:100%;}
+.eco-intro-art-caption {position:absolute; bottom:24%; right:12%; color:#cfb4e0; font:9px monospace; letter-spacing:3px; opacity:.6;}
+.eco-intro-inner {position:relative; max-width:1280px; margin:auto; padding:90px 40px 24px; min-height:660px; display:flex; flex-direction:column; justify-content:space-between; gap:58px;}
+.eco-intro-copy {max-width:610px; padding:15px 0 35px;}
+.eco-intro-eyebrow {display:flex; align-items:center; gap:10px; color:#f4b673; font-size:10px; font-weight:700; letter-spacing:2px; margin-bottom:28px; animation:eco-intro-reveal 1s ease-out both;}
+.eco-intro-eyebrow>span {height:6px; width:6px; border-radius:50%; background:#f08b22; box-shadow:0 0 18px #f08b2270;}
+.eco-intro h1 {font-size:clamp(36px,4.3vw,62px); line-height:1.13; letter-spacing:-2px; font-weight:750; text-wrap:balance; margin:0; animation:eco-intro-reveal 1.2s .15s both;}
+.eco-intro-description {max-width:475px; font-size:16px; line-height:1.8; margin-top:26px; color:#d2c7df; animation:eco-intro-reveal 1.2s .35s both;}
+.eco-intro-actions {display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; animation:eco-intro-reveal 1.2s .5s both;}
+.eco-intro-actions a {display:inline-flex; align-items:center; justify-content:center; gap:22px; padding:15px 22px; border-radius:10px; font-size:13px; font-weight:700; transition:background .2s,transform .2s;}
+.eco-intro-primary {background:#f08b22; color:#170b28; border:1px solid #f08b22;}
+.eco-intro-primary:hover {background:#ffc17e; transform:translateY(-2px);}
+.eco-intro-secondary {border:1px solid #a78bb65c; background:#211332a6; color:#fff;}
+.eco-intro-secondary:hover {background:#503365;}
+.eco-intro-bottom {border-top:1px solid #b799d22b; padding-top:20px; display:flex; justify-content:space-between; align-items:center; gap:22px;}
+.eco-intro-topics {display:flex; gap:32px; font-size:11px; color:#e3d4ee;}
+.eco-intro-topics span {display:flex; align-items:center; gap:9px;}
+.eco-intro-topics i {font:9px monospace; font-style:normal; color:#f3a85a;}
+.eco-intro-motion {display:flex; align-items:center; justify-content:center; gap:8px; font-size:10px; padding:9px 12px; border:1px solid #a78bb65c; border-radius:30px; color:#e7d6f2; background:#1f132d; white-space:nowrap; cursor:pointer;}
+.eco-intro-packet {stroke-dasharray:80 1300; animation:eco-intro-flow 7s linear infinite;}
+.eco-intro-racks {animation:eco-intro-float 10s ease-in-out infinite;}
+.eco-intro-scan {animation:eco-intro-scan 7s ease-in-out infinite; opacity:.5;}
+.eco-intro-orbit {transform-origin:570px 355px; animation:eco-intro-orbit 50s linear infinite;}
+.eco-intro[data-paused="true"] .eco-intro-art * {animation-play-state:paused!important;}
+[dir="rtl"] .eco-intro-art {inset-inline-end:auto; left:-9%; mask-image:linear-gradient(270deg,transparent,#000 23%);}
+[dir="rtl"] .eco-intro h1 {letter-spacing:0; line-height:1.4; font-size:clamp(34px,4vw,54px);}
+[dir="rtl"] .eco-intro-eyebrow {letter-spacing:0; font-size:12px;}
+[dir="rtl"] .eco-intro-copy {max-width:595px;}
+@keyframes eco-intro-reveal {from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes eco-intro-flow {from{stroke-dashoffset:1380}to{stroke-dashoffset:0}}
+@keyframes eco-intro-float {0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes eco-intro-scan {0%,100%{transform:translateY(0);opacity:.15}50%{transform:translateY(220px);opacity:.6}}
+@keyframes eco-intro-orbit {to{transform:rotate(360deg)}}
+@media(max-width:767px) {
+ .eco-intro-inner {padding:40px 22px 20px; min-height:810px; gap:240px;}
+ .eco-intro-copy {max-width:100%; padding:0;}
+ .eco-intro h1 {font-size:37px; letter-spacing:-1.2px; line-height:1.14;}
+ .eco-intro-eyebrow {font-size:8px; margin-bottom:20px; letter-spacing:1.5px;}
+ .eco-intro-description {font-size:14px; line-height:1.7; margin-top:18px; max-width:100%;}
+ .eco-intro-actions {margin-top:23px; gap:10px;}
+ .eco-intro-actions a {padding:12px 16px; font-size:11px; gap:16px;}
+ .eco-intro-art, [dir="rtl"] .eco-intro-art {width:135%; height:460px; top:auto; bottom:45px; left:-16%; right:auto; mask-image:linear-gradient(0deg,#000 65%,transparent); opacity:.8;}
+ .eco-intro-art-caption {display:none;}
+ .eco-intro-bottom {flex-wrap:wrap; gap:17px; padding-top:16px;}
+ .eco-intro-topics {gap:18px; font-size:9px; width:100%; justify-content:space-between;}
+ .eco-intro-topics span {gap:5px;}
+ .eco-intro-motion {margin-inline-start:auto; font-size:9px;}
+ [dir="rtl"] .eco-intro h1 {font-size:33px; line-height:1.45;}
+ [dir="rtl"] .eco-intro-eyebrow {font-size:11px;}
+}
+@media(prefers-reduced-motion:reduce) {
+ .eco-intro *, .eco-intro *::before {animation:none!important; transition:none!important;}
+ .eco-intro-motion {display:none;}
+ .eco-intro-scan {opacity:0;}
+                    }
