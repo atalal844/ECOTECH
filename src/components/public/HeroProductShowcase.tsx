@@ -172,19 +172,19 @@ const introPhotographs = [
     "name": "Data-center interior",
     "author": "Brett Sayles",
     "source": "https://www.pexels.com/photo/black-server-racks-4508751/",
-    "src": "https://images.pexels.com/photos/4508751/pexels-photo-4508751.jpeg?auto=compress&w=1260&h=750&dpr=1"
+    "src": "/hero-photo/0"
   },
   {
     "name": "Server racks",
     "author": "Brett Sayles",
     "source": "https://www.pexels.com/photo/server-racks-on-data-center-5480781/",
-    "src": "https://images.pexels.com/photos/5480781/pexels-photo-5480781.jpeg?auto=compress&w=1260&h=750&dpr=1"
+    "src": "/hero-photo/1"
   },
   {
     "name": "Network connections",
     "author": "Brett Sayles",
     "source": "https://www.pexels.com/photo/cables-connected-to-ethernet-ports-2881232/",
-    "src": "https://images.pexels.com/photos/2881232/pexels-photo-2881232.jpeg?auto=compress&w=1260&h=750&dpr=1"
+    "src": "/hero-photo/2"
   }
 ];
 
@@ -202,8 +202,8 @@ export function CinematicIntro(props: CinematicIntroProps) {
           alt=""
           width="1260"
           height="840"
-          loading={i === 0 ? "eager" : "lazy"}
-          fetchPriority={i === 0 ? "high" : "low"}
+          loading="eager"
+          fetchPriority={i === 0 ? "high" : "auto"}
           decoding="async"
         />)}
         <div className="eco-intro-photo-shade" />
