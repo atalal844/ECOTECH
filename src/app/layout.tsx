@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FloatingContact } from "@/components/public/FloatingContact";
 import type { ReactNode } from "react";
 import { cookies } from "next/headers";
 import { Plus_Jakarta_Sans, IBM_Plex_Sans_Arabic } from "next/font/google";
@@ -67,6 +68,7 @@ export default async function RootLayout({
       >
         <a href="#main-content" className="skip-link">{lang === "ar" ? "انتقل إلى المحتوى" : "Skip to content"}</a>
         {children}
+        <FloatingContact lang={lang} />
       </body>
     </html>
   );
