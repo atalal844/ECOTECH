@@ -47,9 +47,10 @@ export const metadata: Metadata = {
   },
 };
 
-const WM_IMG = ':is(a,div,figure,picture):has(> img:is(.object-cover,.object-contain):not([src*="logo"]):not([src*="placeholder"]))';
+const WM_IMG = ':is(a,div,figure,picture,button[class*="aspect-"]):has(> img:is(.object-cover,.object-contain):not(.opacity-25):not([src*="logo"]):not([src*="placeholder"]))';
 const WM_CSS = `@layer base{html[data-wm="on"] ${WM_IMG}{position:relative}}
-html[data-wm="on"] ${WM_IMG}::after,html[data-wm="on"] .eco-intro-photos::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:url(/ecotech-logo.svg) center/92% auto no-repeat;opacity:var(--wm-opacity,.25);filter:drop-shadow(0 0 3px rgba(255,255,255,.55))}`;
+html[data-wm="on"] ${WM_IMG}::after,html[data-wm="on"] .eco-intro-photos::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;background:url(/ecotech-logo.svg) center/92% auto no-repeat;opacity:var(--wm-opacity,.25);filter:drop-shadow(0 0 3px rgba(255,255,255,.55))}
+html[data-wm="on"] figure:has(> img)::after{bottom:3rem}`;
 
 export default async function RootLayout({
   children,
