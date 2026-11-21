@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FileDown, ChevronRight, ChevronLeft } from "lucide-react";
@@ -12,6 +13,32 @@ import { ProductCatalogClient } from "@/components/public/ProductCatalogClient";
 import { ProductCard } from "@/components/public/ProductCard";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const [lang, rows] = await Promise.all([
+    getServerLang(),
+    db.select().from(productCategories).where(eq(productCategories.slug, slug)).limit(1),
+  ]);
+  const c = rows[0];
+  if (!c) return { title: "Category Not Found" };
+  const ar = lang === "ar";
+  const title = (ar ? c.seoTitleAr : c.seoTitleEn) || (ar ? c.nameAr || c.nameEn : c.nameEn);
+  const description =
+    (ar ? c.seoDescriptionAr : c.seoDescriptionEn) ||
+    (ar ? c.descriptionAr || c.descriptionEn : c.descriptionEn) ||
+    "";
+  const image = c.imageUrl || c.bannerUrl;
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: image ? [image] : ["/ecotech-social.png"] },
+  };
+}
 
 export default async function CategoryPage({
   params,
