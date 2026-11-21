@@ -75,7 +75,7 @@ export function AdminLoginClient() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="superadmin@ecotech.local"
+                  placeholder="name@company.com"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pe-4 ps-10 text-sm outline-none focus:border-[#7A1D4B] focus:bg-white"
                 />
               </div>
@@ -106,36 +106,6 @@ export function AdminLoginClient() {
               {loading ? "Authenticating..." : "Sign In to Dashboard"}
             </button>
           </form>
-
-          {/* Role Reference for System Administrators */}
-          <details className="mt-6 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
-            <summary className="cursor-pointer font-bold text-slate-800">
-              Seeded RBAC Accounts (Click to Autofill)
-            </summary>
-            <div className="mt-2.5 space-y-1.5">
-              {[
-                { role: "Super Admin", email: "superadmin@ecotech.local", pass: "EcoTech@2026!" },
-                { role: "Admin", email: "admin@ecotech.local", pass: "Admin@2026!" },
-                { role: "Editor", email: "editor@ecotech.local", pass: "Editor@2026!" },
-                { role: "Sales Manager", email: "sales@ecotech.local", pass: "Sales@2026!" },
-              ].map((acc) => (
-                <button
-                  key={acc.email}
-                  type="button"
-                  onClick={() => {
-                    setEmail(acc.email);
-                    setPassword(acc.pass);
-                  }}
-                  className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-left transition hover:border-[#7A1D4B]"
-                >
-                  <span className="font-bold text-[#250C52]">{acc.role}</span>
-                  <span className="font-mono text-[11px] text-slate-500">
-                    {acc.email}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </details>
 
           <div className="mt-6 text-center">
             <Link
