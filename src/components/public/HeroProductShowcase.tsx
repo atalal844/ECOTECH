@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpRight, Pause, Play } from "lucide-react";
 
 interface ShowcaseProduct {
   id: string | number;
@@ -14,6 +14,9 @@ interface ShowcaseProduct {
   descriptionEn?: string | null;
   descriptionAr?: string | null;
   imageUrl?: string | null;
+  primaryImage?: { url: string } | null;
+  shortOverviewEn?: string | null;
+  shortOverviewAr?: string | null;
   sku?: string | null;
 }
 
@@ -26,20 +29,23 @@ export function HeroProductShowcase({
 }) {
   const [index, setIndex] = useState(0);
   const isRtl = lang === "ar";
+  const [paused, setPaused] = useState(false);
+  const [interacting, setInteracting] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!products || products.length <= 1) return;
+    if (!products || products.length <= 1 || paused || interacting || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % products.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [products]);
+  }, [products.length, paused, interacting]);
 
   if (!products || products.length === 0) {
     return (
       <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl bg-slate-100">
         <img
-          src="/images/hero-datacenter.jpg"
+          src="/product-placeholder.svg"
           alt="ECOTECH Infrastructure"
           className="h-full w-full object-cover"
         />
@@ -47,11 +53,12 @@ export function HeroProductShowcase({
     );
   }
 
-  const current = products[index];
+  const current = products[index % products.length];
+  const imageSrc = current.primaryImage?.url || current.imageUrl || "/product-placeholder.svg";
   const title = isRtl ? current.nameAr || current.nameEn : current.nameEn;
   const summary = isRtl
-    ? current.shortDescriptionAr || current.descriptionAr || current.shortDescriptionEn || ""
-    : current.shortDescriptionEn || current.descriptionEn || "";
+    ? current.shortOverviewAr || current.shortDescriptionAr || current.descriptionAr || current.shortOverviewEn || current.shortDescriptionEn || ""
+    : current.shortOverviewEn || current.shortDescriptionEn || current.descriptionEn || "";
 
   const prevSlide = () =>
     setIndex((prev) => (prev - 1 + products.length) % products.length);
@@ -59,23 +66,25 @@ export function HeroProductShowcase({
     setIndex((prev) => (prev + 1) % products.length);
 
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-950">
+    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-950" role="region" aria-label={isRtl ? "منتجات مميزة" : "Featured products"} onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)} onFocusCapture={() => setInteracting(true)} onBlurCapture={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setInteracting(false); }}>
       {/* صورة المنتج */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900">
+      <div className="relative aspect-[4/3] min-h-[300px] w-full overflow-hidden bg-slate-900 sm:aspect-[16/10]">
         <img
-          src={current.imageUrl || "/images/hero-datacenter.jpg"}
+          src={failedSrc === imageSrc ? "/product-placeholder.svg" : imageSrc}
+          onError={() => setFailedSrc(imageSrc)}
           alt={title}
-          className="h-full w-full object-cover transition-all duration-700"
+          className="h-full w-full object-contain p-6 pb-28 transition-all duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/10 to-transparent" />
 
         {/* أزرار التنقل */}
         {products.length > 1 && (
           <div className="absolute top-3 end-3 flex items-center gap-1.5">
+            <button type="button" onClick={() => setPaused(v => !v)} aria-label={paused ? (isRtl ? "تشغيل العرض" : "Play slideshow") : (isRtl ? "إيقاف العرض" : "Pause slideshow")} className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur">{paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />}</button>
             <button
               type="button"
               onClick={isRtl ? nextSlide : prevSlide}
-              aria-label="Previous product"
+              aria-label={isRtl ? "المنتج السابق" : "Previous product"}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-[#F08B22]"
             >
               <ChevronLeft className="h-4 w-4" />
@@ -83,7 +92,7 @@ export function HeroProductShowcase({
             <button
               type="button"
               onClick={isRtl ? prevSlide : nextSlide}
-              aria-label="Next product"
+              aria-label={isRtl ? "المنتج التالي" : "Next product"}
               className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur transition hover:bg-[#F08B22]"
             >
               <ChevronRight className="h-4 w-4" />
@@ -128,7 +137,8 @@ export function HeroProductShowcase({
                   key={idx}
                   type="button"
                   onClick={() => setIndex(idx)}
-                  aria-label={`Slide ${idx + 1}`}
+                  aria-label={isRtl ? `المنتج ${idx + 1}` : `Product ${idx + 1}`}
+                  aria-pressed={idx === index}
                   className={`h-1.5 rounded-full transition-all ${
                     idx === index ? "w-6 bg-[#F08B22]" : "w-2 bg-white/40"
                   }`}
