@@ -1,4 +1,5 @@
 import React from "react";
+import { pageMetadata } from "@/lib/seo";
 import {
   FileDown,
   Target,
@@ -18,6 +19,10 @@ import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return pageMetadata("about");
+}
 
 export default async function AboutPage() {
   const [lang, chrome, page] = await Promise.all([
