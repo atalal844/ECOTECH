@@ -1,6 +1,6 @@
 import React from "react";
 import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
-import { getServerLang, getPublicSiteChrome } from "@/lib/public-data";
+import { getServerLang, getPublicSiteChrome, VERIFIED_CONTACT_OFFICES } from "@/lib/public-data";
 import { UI_LABELS, pickText } from "@/lib/i18n";
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
@@ -110,7 +110,7 @@ export default async function ContactPage({
                       )}
                       {phoneSales && (
                         <div className="text-xs text-slate-500" dir="ltr">
-                          Sales: {phoneSales}
+                          {phoneSales}
                         </div>
                       )}
                     </div>
@@ -158,7 +158,7 @@ export default async function ContactPage({
               </div>
 
               {/* Social Links */}
-              <div className="border-t border-slate-100 pt-4">
+              {Object.values(social).some(Boolean) && <div className="border-t border-slate-100 pt-4">
                 <div className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase text-slate-400">
                   <Globe className="h-3.5 w-3.5" />
                   <span>{lang === "ar" ? "قنوات التواصل" : "Social Channels"}</span>
@@ -178,7 +178,22 @@ export default async function ContactPage({
                     ) : null
                   )}
                 </div>
-              </div>
+              </div>}
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
+              <h2 className="text-lg font-extrabold text-slate-950">
+                {lang === "ar" ? "مكاتبنا الإقليمية" : "Regional Offices"}
+              </h2>
+              {VERIFIED_CONTACT_OFFICES.slice(1).map((office) => (
+                <section key={office.country} className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-600">
+                  <h3 className="font-bold text-[#250C52]">
+                    {lang === "ar" ? (office.country === "JORDAN" ? "الأردن" : "المملكة العربية السعودية") : office.country}
+                  </h3>
+                  <p>{office.address}</p>
+                  {office.phones.map((phone) => <a key={phone} href={`tel:${phone.replace(/[^+\d]/g, "")}`} dir="ltr" className="block font-medium hover:underline">{phone}</a>)}
+                </section>
+              ))}
             </div>
 
             {/* Google Maps Integration */}
@@ -217,4 +232,4 @@ export default async function ContactPage({
       />
     </div>
   );
-}
+            }
