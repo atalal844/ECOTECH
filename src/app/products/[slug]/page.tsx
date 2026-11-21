@@ -16,6 +16,13 @@ import {
   getPublishedProductBySlug,
 } from "@/lib/public-data";
 import { UI_LABELS, pickText } from "@/lib/i18n";
+
+function pickDual(lang: string, value?: string | null): string {
+  if (!value) return "";
+  const parts = value.split(" / ");
+  if (parts.length < 2) return value;
+  return lang === "ar" ? parts.slice(1).join(" / ") : parts[0];
+}
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { ProductCard } from "@/components/public/ProductCard";
@@ -165,7 +172,7 @@ export default async function ProductDetailsPage({
                   {t.sku}: {product.sku}
                 </span>
                 <span className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700">
-                  {t.model}: {product.model}
+                  {t.model}: {pickDual(lang, product.model)}
                 </span>
                 <span className="rounded-lg bg-emerald-50 px-2.5 py-1 font-semibold text-emerald-700">
                   {product.availabilityStatus === "in_stock"
@@ -197,8 +204,11 @@ export default async function ProductDetailsPage({
                     <Ruler className="h-4 w-4 text-[#F08B22]" />
                     <span>{t.dimensions}</span>
                   </div>
-                  <div className="mt-1 text-xs text-slate-600" dir="ltr">
-                    {product.dimensions}
+                  <div
+                    className="mt-1 text-xs text-slate-600"
+                    dir={lang === "ar" ? "rtl" : "ltr"}
+                  >
+                    {pickDual(lang, product.dimensions)}
                   </div>
                 </div>
               )}
