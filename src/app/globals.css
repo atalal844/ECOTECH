@@ -105,7 +105,6 @@ body {
 }
 @media(prefers-reduced-motion:reduce) {
  .eco-intro *, .eco-intro *::before {animation:none!important; transition:none!important;}
- .eco-intro-motion {display:none;}
  .eco-intro-scan {opacity:0;}
 }
 
@@ -129,7 +128,12 @@ body {
  .eco-intro-photo-shade,[dir="rtl"] .eco-intro-photo-shade {background:linear-gradient(180deg,rgba(13,6,26,.92),rgba(21,10,38,.82) 38%,rgba(21,10,38,.15) 76%,rgba(14,7,28,.88));}
  .eco-intro-credit {inset-inline-end:22px; bottom:115px; font-size:8px;}
 }
+/* Reduced motion: no zoom, but keep a very slow opacity-only crossfade so the photos still rotate. Pause button stays available. */
+@keyframes eco-photo-fade {0%{opacity:0}6%,30%{opacity:1}38%,100%{opacity:0}}
 @media(prefers-reduced-motion:reduce) {
- .eco-intro-photo {opacity:0!important; will-change:auto;}
- .eco-intro-photo-0 {opacity:1!important;}
-                   }
+ .eco-intro .eco-intro-photo {transform:none!important; will-change:opacity; opacity:0; animation:eco-photo-fade 27s linear infinite!important;}
+ .eco-intro .eco-intro-photo-0 {opacity:1; animation-delay:0s!important;}
+ .eco-intro .eco-intro-photo-1 {animation-delay:9s!important;}
+ .eco-intro .eco-intro-photo-2 {animation-delay:18s!important;}
+ .eco-intro[data-paused="true"] .eco-intro-photo {animation-play-state:paused!important;}
+}
