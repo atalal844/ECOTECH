@@ -8,7 +8,7 @@ import { logActivity, getClientIp } from "@/lib/audit";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const createInquirySchema = z.object({
-  inquiryType: z.enum(["quote", "contact", "sales"]).default("quote"),
+  inquiryType: z.enum(["quote", "contact", "sales", "service"]).default("quote"),
   customerName: z.string().min(2).max(150),
   companyName: z.string().max(160).optional().nullable(),
   email: z.string().email().max(160),
