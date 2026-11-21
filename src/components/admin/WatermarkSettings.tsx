@@ -5,7 +5,7 @@ import { Save } from "lucide-react";
 
 export function WatermarkSettings() {
   const [enabled, setEnabled] = useState(true);
-  const [opacity, setOpacity] = useState(25);
+  const [opacity, setOpacity] = useState(45);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -14,7 +14,7 @@ export function WatermarkSettings() {
       .then((r) => r.json())
       .then((d) => {
         setEnabled(!!d.enabled);
-        setOpacity(Number(d.opacity) || 25);
+        setOpacity(Number(d.opacity) || 45);
       })
       .catch(() => {});
   }, []);
@@ -59,7 +59,7 @@ export function WatermarkSettings() {
                 WebkitMask: "url(/ecotech-logo.svg) center/92% auto no-repeat",
                 mask: "url(/ecotech-logo.svg) center/92% auto no-repeat",
                 opacity: opacity / 100,
-                filter: "drop-shadow(0 0 1.5px rgba(0,0,0,.95)) drop-shadow(0 0 5px rgba(0,0,0,.55))",
+                filter: "drop-shadow(0 0 1px #000) drop-shadow(0 0 2px #000) drop-shadow(0 0 6px rgba(0,0,0,.8))",
               }}
             />
           )}
