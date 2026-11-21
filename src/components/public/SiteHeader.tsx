@@ -69,6 +69,16 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
     { id: -2, labelEn: "About", labelAr: "عن الشركة", href: "/about" },
     { id: -3, labelEn: "Contact", labelAr: "تواصل معنا", href: "/contact" },
   ];
+  const hasServices = navMenus.some((m) => m.href === "/services");
+  const navItems: NavMenuItem[] = hasServices
+    ? navMenus
+    : (() => {
+        const svc: NavMenuItem = { id: -10, labelEn: "Services", labelAr: "الخدمات", href: "/services" };
+        const i = navMenus.findIndex((m) => m.href === "/contact");
+        const out = [...navMenus];
+        out.splice(i === -1 ? out.length : i, 0, svc);
+        return out;
+      })();
   const topCategories = categories.filter((c) => !c.parentId);
   const contactEmail = settings.contact_email?.en || "";
   const phonePrimary = settings.phone_primary?.en || "";
@@ -209,7 +219,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
 
         {/* Desktop Nav Links + Mega Menu Trigger */}
         <nav className="hidden items-center gap-1 lg:flex">
-          {navMenus.map((item) => {
+          {navItems.map((item) => {
             const isProducts = item.href === "/products";
             if (isProducts) {
               return (
@@ -390,7 +400,7 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
           </form>
 
           <div className="space-y-1">
-            {navMenus.map((m) => (
+            {navItems.map((m) => (
               <Link
                 key={m.id}
                 href={m.href}
