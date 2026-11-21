@@ -542,7 +542,7 @@ export default async function HomePage() {
                 </div>
                 <div>
                   <strong>{lang === "ar" ? "العنوان:" : "Facility:"}</strong>{" "}
-                  <span>
+                  <span dir="ltr">
                     {pickText(
                       lang,
                       chrome.settings.address?.en,
@@ -567,4 +567,4 @@ export default async function HomePage() {
       />
     </div>
   );
-                    }
+}
