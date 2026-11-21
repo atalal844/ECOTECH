@@ -57,7 +57,8 @@ export default async function HomePage() {
   const catalogHref =
     chrome.settings.master_catalog_url?.en ||
     heroPayload.catalogHref ||
-    "/products";
+    "";
+  const hasCatalog = Boolean(catalogHref && catalogHref !== "/products");
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
@@ -68,7 +69,7 @@ export default async function HomePage() {
         settings={chrome.settings}
       />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* 1. HERO SECTION */}
         <section className="relative overflow-hidden border-b border-slate-200 bg-white">
           <div className="eco-grid-bg absolute inset-0 opacity-70" />
@@ -129,7 +130,7 @@ export default async function HomePage() {
                   </span>
                 </Link>
 
-                <a
+                {hasCatalog && <a
                   href={catalogHref}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -143,7 +144,7 @@ export default async function HomePage() {
                       heroPayload.catalogLabelAr
                     ) || t.downloadCatalog}
                   </span>
-                </a>
+                </a>}
               </div>
             </div>
 
@@ -217,20 +218,20 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className={home.topCategories.length === 1 ? "mx-auto grid max-w-3xl grid-cols-1" : "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"}>
             {home.topCategories.map((cat) => {
               const subs = home.allCategories.filter((c) => c.parentId === cat.id);
               return (
                 <div
                   key={cat.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl"
+                  className={`group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl ${home.topCategories.length === 1 ? "md:flex-row" : ""}`}
                 >
                   <Link
                     href={`/categories/${cat.slug}`}
-                    className="relative aspect-[16/10] overflow-hidden bg-slate-100"
+                    className={`relative aspect-[16/10] overflow-hidden bg-slate-100 ${home.topCategories.length === 1 ? "md:w-1/2 md:shrink-0" : ""}`}
                   >
                     <img
-                      src={cat.imageUrl || "/images/cat-racks.jpg"}
+                      src={cat.imageUrl || "/product-placeholder.svg"}
                       alt={pickText(lang, cat.nameEn, cat.nameAr)}
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -263,8 +264,8 @@ export default async function HomePage() {
                       >
                         <span>
                           {lang === "ar"
-                            ? `تصفح ${subs.length} أقسام فرعية`
-                            : `Explore ${subs.length} Subcategories`}
+                            ? (subs.length ? `تصفح ${subs.length} أقسام فرعية` : "تصفح المنتجات")
+                            : (subs.length ? `Explore ${subs.length} Subcategories` : "View Products")}
                         </span>
                         <ArrowIcon className="h-3.5 w-3.5" />
                       </Link>
@@ -297,16 +298,16 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className={home.featuredProducts.length === 1 ? "mx-auto grid max-w-3xl grid-cols-1" : "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"}>
               {home.featuredProducts.map((prod) => (
-                <ProductCard key={prod.id} product={prod} lang={lang} />
+                <ProductCard key={prod.id} product={prod} lang={lang} horizontal={home.featuredProducts.length === 1} />
               ))}
             </div>
           </div>
         </section>
 
         {/* 4. WHY CHOOSE ECOTECH */}
-        {why && (
+        {why && whyCards.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-10 max-w-2xl">
               <span className="text-xs font-bold uppercase tracking-widest text-[#7A1D4B]">
@@ -342,7 +343,7 @@ export default async function HomePage() {
         )}
 
         {/* 5. COMPANY CAPABILITIES & TECHNOLOGY HIGHLIGHTS */}
-        {capabilities && (
+        {capabilities && capItems.length > 0 && (
           <section className="border-y border-slate-200 bg-slate-900 py-16 text-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-10 grid grid-cols-1 items-end gap-6 lg:grid-cols-2">
@@ -387,7 +388,7 @@ export default async function HomePage() {
         )}
 
         {/* 6. FEATURED PROJECTS & APPLICATIONS */}
-        {projects && (
+        {projects && projectItems.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-10 max-w-2xl">
               <span className="text-xs font-bold uppercase tracking-widest text-[#7A1D4B]">
@@ -439,7 +440,7 @@ export default async function HomePage() {
         )}
 
         {/* 7. CERTIFICATIONS & QUALITY STANDARDS */}
-        {certifications && (
+        {certifications && certBadges.length > 0 && (
           <section className="border-y border-slate-200 bg-white py-14">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-8 text-center">
@@ -475,7 +476,7 @@ export default async function HomePage() {
         )}
 
         {/* 8. LATEST NEWS & UPDATES */}
-        {news && (
+        {news && newsPosts.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -566,4 +567,4 @@ export default async function HomePage() {
       />
     </div>
   );
-}
+                    }
