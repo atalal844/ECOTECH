@@ -100,7 +100,6 @@ export async function getPublicSiteChrome() {
     db
       .select()
       .from(productCategories)
-      .where(eq(productCategories.isActive, true))
       .orderBy(asc(productCategories.displayOrder), asc(productCategories.id)),
     db
       .select()
@@ -192,7 +191,7 @@ export async function getPublishedProductBySlug(slug: string) {
     .where(eq(products.slug, slug))
     .limit(1);
 
-  if (!product || product.status !== "published") return null;
+  if (!product) return null;
 
   // Increment view count
   await db
