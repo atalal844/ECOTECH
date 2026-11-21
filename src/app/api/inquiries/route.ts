@@ -1,4 +1,5 @@
-import { NextRequest } from "next/server";
+import { NextRequest, after } from "next/server";
+import { notifyNewInquiry } from "@/lib/inquiry-notify";
 import { z } from "zod";
 import { db, inquiries, inquiryNotes, products } from "@/db";
 import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
@@ -139,6 +140,8 @@ export async function POST(request: NextRequest) {
       },
       ipAddress: ip,
     });
+
+    after(() => notifyNewInquiry(created));
 
     return Response.json({ inquiry: created }, { status: 201 });
   } catch (err) {
