@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { Save, CheckCircle2, AlertCircle, X } from "lucide-react";
+import { ServicesEditor } from "./ServicesEditor";
 
 interface HomepageSectionRow {
   id: number;
@@ -40,7 +41,7 @@ interface WebsitePageRow {
 }
 
 export function CmsSettingsManager() {
-  const [subTab, setSubTab] = useState<"homepage" | "about" | "settings">(
+  const [subTab, setSubTab] = useState<"homepage" | "about" | "services" | "settings">(
     "homepage"
   );
   const [sections, setSections] = useState<HomepageSectionRow[]>([]);
@@ -81,7 +82,7 @@ export function CmsSettingsManager() {
     }
     if (sRes.ok) {
       const sData = await sRes.json();
-      setSettings(sData.settings || []);
+      setSettings((sData.settings || []).filter((r: { key: string }) => r.key !== "services_content"));
     }
   }, [selectedKey]);
 
@@ -205,6 +206,7 @@ export function CmsSettingsManager() {
             [
               ["homepage", "Homepage Sections"],
               ["about", "About Us Page"],
+              ["services", "Services"],
               ["settings", "Contact & Footer Settings"],
             ] as const
           ).map(([k, label]) => (
@@ -245,6 +247,8 @@ export function CmsSettingsManager() {
           </button>
         </div>
       )}
+
+      {subTab === "services" && <ServicesEditor />}
 
       {/* 1. HOMEPAGE SECTIONS */}
       {subTab === "homepage" && (
