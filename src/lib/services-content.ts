@@ -570,3 +570,56 @@ export const PAGES: Record<string, ServicePage> = {
   warehousing: WAREHOUSING,
   "fiber-lab": FIBER_LAB,
 };
+
+export interface HomeServicesContent {
+  eyebrow: L;
+  title: L;
+  blurb: L;
+  more: L;
+  all: L;
+  cards: { title: L; text: L; image: ServiceImage }[];
+}
+
+export interface ServicesContent {
+  pages: { warehousing: ServicePage; "fiber-lab": ServicePage };
+  home: HomeServicesContent;
+  credits: L;
+}
+
+export const HOME_DEFAULT: HomeServicesContent = {
+  eyebrow: { en: "Services", ar: "الخدمات" },
+  title: { en: "Services that support your business", ar: "خدمات تدعم أعمالك" },
+  blurb: {
+    en: "Beyond products, ECOTECH offers storage space in Cairo with inventory management, and a lab for third-party fiber-optic cable maintenance and testing. Each service has its own page. Contact us for details.",
+    ar: "إلى جانب المنتجات، تقدّم ECOTECH مساحات تخزين في القاهرة مع إدارة المخزون، ومعملًا لصيانة واختبار كابلات الألياف الضوئية للغير. ولكل خدمة صفحتها الخاصة. تواصلوا معنا لمعرفة التفاصيل.",
+  },
+  more: { en: "Learn more", ar: "اعرف المزيد" },
+  all: { en: "All services", ar: "كل الخدمات" },
+  cards: [
+    {
+      title: { en: "Warehousing & Inventory Management", ar: "التخزين وإدارة المخزون" },
+      text: {
+        en: "Third-party storage for every requirement, with stock counts and item movement records agreed around your needs.",
+        ar: "تخزين للغير لمختلف المساحات المطلوبة، مع جرد وسجل لحركة الأصناف يُتفق عليهما وفق احتياجكم.",
+      },
+      image: IMAGES.warehouse,
+    },
+    {
+      title: {
+        en: "Fiber-Optic Cable Maintenance & Testing Lab",
+        ar: "معمل صيانة واختبار كابلات الألياف الضوئية",
+      },
+      text: {
+        en: "Maintenance and testing of fiber-optic cables for third parties. Share the cable type, quantity and fault to agree the work scope.",
+        ar: "صيانة واختبار كابلات الألياف الضوئية للغير. أرسلوا نوع الكابل وعددها ووصف العطل لنحدد نطاق العمل.",
+      },
+      image: IMAGES.fiber,
+    },
+  ],
+};
+
+export const SERVICES_DEFAULT: ServicesContent = {
+  pages: { warehousing: WAREHOUSING, "fiber-lab": FIBER_LAB },
+  home: HOME_DEFAULT,
+  credits: CREDITS,
+};

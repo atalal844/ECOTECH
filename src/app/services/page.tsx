@@ -9,7 +9,7 @@ import {
   ServicesInquiry,
   type ServiceKey,
 } from "@/components/public/ServicesInquiry";
-import { WAREHOUSING, FIBER_LAB, CREDITS } from "@/lib/services-content";
+import { getServicesContent } from "@/lib/services-store";
 
 export const dynamic = "force-dynamic";
 
@@ -71,7 +71,14 @@ const T = {
 } as const;
 
 export default async function ServicesPage() {
-  const [lang, chrome] = await Promise.all([getServerLang(), getPublicSiteChrome()]);
+  const [lang, chrome, { content }] = await Promise.all([
+    getServerLang(),
+    getPublicSiteChrome(),
+    getServicesContent(),
+  ]);
+  const WAREHOUSING = content.pages.warehousing;
+  const FIBER_LAB = content.pages["fiber-lab"];
+  const CREDITS = content.credits;
   const t = T[lang];
   const ArrowIcon = lang === "ar" ? ArrowLeft : ArrowRight;
   const defaultService: ServiceKey = "undecided";
