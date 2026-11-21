@@ -146,7 +146,7 @@ export default async function ProductDetailsPage({
         </div>
       </div>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-10 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 space-y-12 px-4 py-10 sm:px-6">
         {/* Top Product Hero Grid */}
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
           <div className="lg:col-span-6">
@@ -359,4 +359,4 @@ export default async function ProductDetailsPage({
       />
     </div>
   );
-}
+            }
