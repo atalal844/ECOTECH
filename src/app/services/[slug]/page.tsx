@@ -18,9 +18,9 @@ import { getServerLang, getPublicSiteChrome } from "@/lib/public-data";
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { ServicesInquiry } from "@/components/public/ServicesInquiry";
+import { getServicesContent } from "@/lib/services-store";
 import {
-  PAGES,
-  CREDITS,
+  type ServicePage,
   type ServiceImage,
   type ServiceBlock,
 } from "@/lib/services-content";
@@ -33,12 +33,14 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const p = PAGES[slug];
+  const { content } = await getServicesContent();
+  const p = (content.pages as Record<string, ServicePage>)[slug];
   if (!p) return {};
   return { title: `${p.title.en} | ${p.title.ar}`, description: p.lead.en };
 }
 
 function Figure({ img, lang, tall }: { img: ServiceImage; lang: "en" | "ar"; tall?: boolean }) {
+  if (!img.src) return null;
   return (
     <figure className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
       <img
@@ -125,6 +127,9 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const { content } = await getServicesContent();
+  const PAGES = content.pages as Record<string, ServicePage>;
+  const CREDITS = content.credits;
   const p = PAGES[slug];
   if (!p) notFound();
   const [lang, chrome] = await Promise.all([getServerLang(), getPublicSiteChrome()]);
