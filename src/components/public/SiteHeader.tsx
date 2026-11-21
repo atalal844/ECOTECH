@@ -12,7 +12,6 @@ import {
   Phone,
   Mail,
   FileDown,
-  ShieldCheck,
   ArrowRight,
   ArrowLeft,
 } from "lucide-react";
@@ -171,13 +170,6 @@ export function SiteHeader({ lang, categories, menus, settings }: SiteHeaderProp
               <FileDown className="h-3.5 w-3.5" />
               <span>{t.downloadCatalog}</span>
             </a>}
-            <Link
-              href="/admin"
-              className="flex items-center gap-1 text-slate-300 transition hover:text-white"
-            >
-              <ShieldCheck className="h-3.5 w-3.5 text-[#F28E20]" />
-              <span>{t.adminPortal}</span>
-            </Link>
             <div className="flex items-center gap-1 rounded-md border border-white/15 bg-white/10 p-0.5">
               <Globe className="mx-1 h-3.5 w-3.5 text-amber-300" />
               <button
