@@ -23,7 +23,7 @@ export default async function ProductsPage({
   ]);
   const t = UI_LABELS[lang];
 
-  const conditions = [eq(products.status, "published")];
+  const conditions = [inArray(products.status, ["published", "draft"])];
   if (q) {
     const pattern = `%${q}%`;
     const specMatches = await db
