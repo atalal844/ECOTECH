@@ -18,6 +18,7 @@ import {
 } from "@/lib/public-data";
 import { UI_LABELS, pickText } from "@/lib/i18n";
 import { SiteHeader } from "@/components/public/SiteHeader";
+import { HomeServices } from "@/components/public/HomeServices";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { ProductCard } from "@/components/public/ProductCard";
 import { CinematicIntro } from "@/components/public/HeroProductShowcase";
@@ -177,6 +178,8 @@ export default async function HomePage() {
             })}
           </div>
         </section>
+
+        <HomeServices lang={lang} />
 
         {/* 3. BEST-SELLING & FEATURED PRODUCTS */}
         <section className="border-y border-slate-200 bg-white py-16">
