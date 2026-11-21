@@ -91,7 +91,7 @@ export default async function ContactPage({
                       <div className="text-xs font-bold uppercase text-slate-400">
                         {lang === "ar" ? "العنوان" : "Business Address"}
                       </div>
-                      <div className="mt-0.5 font-medium">{address}</div>
+                      <div className="mt-0.5 font-medium" dir="ltr">{address}</div>
                     </div>
                   </div>
                 )}
@@ -190,7 +190,7 @@ export default async function ContactPage({
                   <h3 className="font-bold text-[#250C52]">
                     {lang === "ar" ? (office.country === "JORDAN" ? "الأردن" : "المملكة العربية السعودية") : office.country}
                   </h3>
-                  <p>{office.address}</p>
+                  <p dir="ltr">{office.address}</p>
                   {office.phones.map((phone) => <a key={phone} href={`tel:${phone.replace(/[^+\d]/g, "")}`} dir="ltr" className="block font-medium hover:underline">{phone}</a>)}
                 </section>
               ))}
@@ -232,4 +232,4 @@ export default async function ContactPage({
       />
     </div>
   );
-            }
+          }
