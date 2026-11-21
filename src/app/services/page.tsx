@@ -91,7 +91,12 @@ export default async function ServicesPage() {
       />
 
       <main id="main-content" className="flex-1">
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#1B093D] via-[#250C52] to-[#4a1550] text-white">
+        <section className="relative overflow-hidden bg-[#1B093D] text-white">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid grid-cols-1 sm:grid-cols-2">
+            <img src="/services/warehouse.jpg" alt="" className="h-full w-full object-cover" />
+            <img src="/services/fiber.jpg" alt="" className="hidden h-full w-full object-cover sm:block" />
+          </div>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#1B093D]/95 via-[#250C52]/85 to-[#4a1550]/80" />
           <div className="pointer-events-none absolute -top-24 end-[-6rem] h-80 w-80 rounded-full bg-[#F08B22]/20 blur-3xl" />
           <div className="mx-auto max-w-7xl space-y-6 px-4 py-14 sm:px-6 lg:py-20">
             <span className="inline-block rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-widest text-amber-300">
