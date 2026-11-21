@@ -176,7 +176,7 @@ export default async function CategoryPage({
         </div>
       </section>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 space-y-14 px-4 py-10 sm:px-6">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 space-y-14 px-4 py-10 sm:px-6">
         <ProductCatalogClient
           lang={lang}
           initialProducts={categoryProducts}

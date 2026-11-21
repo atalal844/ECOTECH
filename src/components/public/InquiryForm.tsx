@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import { UI_LABELS, type Lang } from "@/lib/i18n";
 
@@ -18,6 +18,7 @@ export function InquiryForm({
   defaultProductName = "",
 }: InquiryFormProps) {
   const t = UI_LABELS[lang];
+  const formId = useId();
   const [inquiryType, setInquiryType] = useState<"quote" | "contact" | "sales">(
     defaultType
   );
@@ -37,6 +38,7 @@ export function InquiryForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
     setErrorMsg(null);
     setSuccessRef(null);
@@ -60,7 +62,7 @@ export function InquiryForm({
       });
       const data = await res.json();
       if (!res.ok) {
-        setErrorMsg(data.error || "Unable to submit inquiry.");
+        setErrorMsg(lang === "ar" ? "تعذر إرسال الطلب. راجع البيانات وحاول مرة أخرى." : data.error || "Unable to submit inquiry.");
       } else {
         setSuccessRef(data.inquiry?.referenceCode || "RECEIVED");
         setCustomerName("");
@@ -72,20 +74,21 @@ export function InquiryForm({
         setMessage("");
       }
     } catch {
-      setErrorMsg("Network error while sending inquiry.");
+      setErrorMsg(lang === "ar" ? "تعذر الاتصال. تحقق من الإنترنت وحاول مرة أخرى." : "Network error while sending inquiry.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} aria-busy={submitting} className="space-y-4">
       <div className="flex flex-wrap gap-2">
         {(["quote", "sales", "contact"] as const).map((type) => (
           <button
             key={type}
             type="button"
             onClick={() => setInquiryType(type)}
+            aria-pressed={inquiryType === type}
             className={`rounded-xl px-4 py-2 text-xs font-bold uppercase tracking-wide transition ${
               inquiryType === type
                 ? "bg-gradient-to-r from-[#250C52] to-[#7A1D4B] text-white shadow"
@@ -108,14 +111,14 @@ export function InquiryForm({
       </div>
 
       {errorMsg && (
-        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div role="alert" className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{errorMsg}</span>
         </div>
       )}
 
       {successRef && (
-        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
+        <div role="status" className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">
           <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
           <span>
             {t.inquirySuccess} <strong dir="ltr">{successRef}</strong>
@@ -125,10 +128,15 @@ export function InquiryForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-customerName`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.customerName} *
           </label>
           <input
+            id={`${formId}-customerName`}
+            name="customerName"
+            maxLength={150}
+            minLength={2}
+            autoComplete="name"
             required
             value={customerName}
             onChange={(e) => setCustomerName(e.target.value)}
@@ -136,20 +144,28 @@ export function InquiryForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-companyName`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.companyName}
           </label>
           <input
+            id={`${formId}-companyName`}
+            name="companyName"
+            maxLength={160}
+            autoComplete="organization"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm outline-none focus:border-[#7A1D4B] focus:bg-white"
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-email`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.email} *
           </label>
           <input
+            id={`${formId}-email`}
+            name="email"
+            maxLength={160}
+            autoComplete="email"
             required
             type="email"
             value={email}
@@ -158,10 +174,16 @@ export function InquiryForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-phone`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.phone} *
           </label>
           <input
+            id={`${formId}-phone`}
+            name="phone"
+            maxLength={50}
+            minLength={5}
+            autoComplete="tel"
+            type="tel"
             required
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -170,10 +192,15 @@ export function InquiryForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-country`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.country} *
           </label>
           <input
+            id={`${formId}-country`}
+            name="country"
+            maxLength={100}
+            minLength={2}
+            autoComplete="country-name"
             required
             value={country}
             onChange={(e) => setCountry(e.target.value)}
@@ -181,10 +208,13 @@ export function InquiryForm({
           />
         </div>
         <div>
-          <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label htmlFor={`${formId}-quantity`} className="mb-1.5 block text-xs font-semibold text-slate-700">
             {t.quantity}
           </label>
           <input
+            id={`${formId}-quantity`}
+            name="quantity"
+            maxLength={80}
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
             placeholder={lang === "ar" ? "مثال: 20 وحدة" : "e.g., 20 Units"}
@@ -194,10 +224,13 @@ export function InquiryForm({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+        <label htmlFor={`${formId}-productNameSnapshot`} className="mb-1.5 block text-xs font-semibold text-slate-700">
           {t.productOfInterest}
         </label>
         <input
+            id={`${formId}-productNameSnapshot`}
+            name="productNameSnapshot"
+            maxLength={240}
           value={productNameSnapshot}
           onChange={(e) => setProductNameSnapshot(e.target.value)}
           placeholder={
@@ -210,10 +243,14 @@ export function InquiryForm({
       </div>
 
       <div>
-        <label className="mb-1.5 block text-xs font-semibold text-slate-700">
+        <label htmlFor={`${formId}-message`} className="mb-1.5 block text-xs font-semibold text-slate-700">
           {t.message} *
         </label>
         <textarea
+            id={`${formId}-message`}
+            name="message"
+            maxLength={3000}
+            minLength={5}
           required
           rows={4}
           value={message}
@@ -232,4 +269,4 @@ export function InquiryForm({
       </button>
     </form>
   );
-}
+          }

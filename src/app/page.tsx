@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   ArrowRight,
   ArrowLeft,
-  FileDown,
   ShieldCheck,
   Cpu,
   Layers,
@@ -11,7 +10,6 @@ import {
   Newspaper,
   Building2,
   CheckCircle2,
-  PhoneCall,
 } from "lucide-react";
 import {
   getServerLang,
@@ -22,7 +20,7 @@ import { UI_LABELS, pickText } from "@/lib/i18n";
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
 import { ProductCard } from "@/components/public/ProductCard";
-import { HeroProductShowcase } from "@/components/public/HeroProductShowcase";
+import { CinematicIntro } from "@/components/public/HeroProductShowcase";
 import { InquiryForm } from "@/components/public/InquiryForm";
 
 export const dynamic = "force-dynamic";
@@ -57,7 +55,8 @@ export default async function HomePage() {
   const catalogHref =
     chrome.settings.master_catalog_url?.en ||
     heroPayload.catalogHref ||
-    "/products";
+    "";
+  const hasCatalog = Boolean(catalogHref && catalogHref !== "/products");
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
@@ -68,116 +67,19 @@ export default async function HomePage() {
         settings={chrome.settings}
       />
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         {/* 1. HERO SECTION */}
-        <section className="relative overflow-hidden border-b border-slate-200 bg-white">
-          <div className="eco-grid-bg absolute inset-0 opacity-70" />
-          <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:py-20">
-            <div className="space-y-6 lg:col-span-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#7A1D4B]/25 bg-white px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-[#250C52] shadow-sm">
-                <span className="h-2 w-2 rounded-full bg-[#F08B22]" />
-                <span>
-                  {pickText(lang, heroPayload.badgeEn, heroPayload.badgeAr) ||
-                    "ISO 9001:2015 • IEC 60297 • TIA-568"}
-                </span>
-              </div>
-
-              <div className="pt-1">
-                <img
-                  src="/ecotech-logo.svg"
-                  alt="ECOTECH"
-                  className="h-10 w-auto sm:h-12"
-                />
-              </div>
-
-              <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-5xl">
-                {pickText(lang, hero?.titleEn, hero?.titleAr) ||
-                  "Powering the Future of Network Infrastructure"}
-              </h1>
-
-              <p className="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                {pickText(lang, hero?.subtitleEn, hero?.subtitleAr) ||
-                  "Advanced Networking, Fiber Optic and Smart Power Distribution Solutions."}
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <Link
-                  href={hero?.ctaPrimaryHref || "/products"}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#250C52] via-[#7A1D4B] to-[#F08B22] px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#250C52]/15 transition hover:opacity-95"
-                >
-                  <span>
-                    {pickText(
-                      lang,
-                      hero?.ctaPrimaryLabelEn,
-                      hero?.ctaPrimaryLabelAr
-                    ) || t.exploreProducts}
-                  </span>
-                  <ArrowIcon className="h-4 w-4" />
-                </Link>
-
-                <Link
-                  href={hero?.ctaSecondaryHref || "/contact"}
-                  className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3.5 text-sm font-bold text-slate-800 shadow-sm transition hover:border-[#250C52] hover:text-[#250C52]"
-                >
-                  <PhoneCall className="h-4 w-4 text-[#7A1D4B]" />
-                  <span>
-                    {pickText(
-                      lang,
-                      hero?.ctaSecondaryLabelEn,
-                      hero?.ctaSecondaryLabelAr
-                    ) || t.contactSales}
-                  </span>
-                </Link>
-
-                <a
-                  href={catalogHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-xl border border-[#F08B22]/40 bg-amber-50/70 px-5 py-3.5 text-sm font-bold text-[#B65412] transition hover:bg-amber-100"
-                >
-                  <FileDown className="h-4 w-4" />
-                  <span>
-                    {pickText(
-                      lang,
-                      heroPayload.catalogLabelEn,
-                      heroPayload.catalogLabelAr
-                    ) || t.downloadCatalog}
-                  </span>
-                </a>
-              </div>
-            </div>
-
-            {/* Hero Interactive Product Showcase */}
-            <div className="relative lg:col-span-6">
-              <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-2 shadow-2xl">
-                <HeroProductShowcase
-                  products={home.featuredProducts}
-                  lang={lang}
-                />
-                <div className="mt-2 grid grid-cols-3 gap-2 rounded-2xl bg-slate-50 p-3 text-center">
-                  <div>
-                    <div className="text-xs font-bold text-[#250C52]">
-                      {lang === "ar" ? "كبائن الخوادم" : "Server Racks"}
-                    </div>
-                    <div className="text-[11px] text-slate-500">EIA-310-E / 42U</div>
-                  </div>
-                  <div className="border-x border-slate-200">
-                    <div className="text-xs font-bold text-[#7A1D4B]">
-                      {lang === "ar" ? "الألياف الضوئية" : "Fiber Optics"}
-                    </div>
-                    <div className="text-[11px] text-slate-500">OS2 / OM4 / ODF</div>
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-[#D96B27]">
-                      {lang === "ar" ? "الطاقة الذكية" : "Smart PDUs"}
-                    </div>
-                    <div className="text-[11px] text-slate-500">SNMPv3 / ±1%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+        <CinematicIntro
+          lang={lang}
+          title={pickText(lang, hero?.titleEn, hero?.titleAr) || "Powering the Future of Network Infrastructure"}
+          subtitle={pickText(lang, hero?.subtitleEn, hero?.subtitleAr) || "Advanced Networking, Fiber Optic and Smart Power Distribution Solutions."}
+          primaryLabel={pickText(lang, hero?.ctaPrimaryLabelEn, hero?.ctaPrimaryLabelAr) || t.exploreProducts}
+          primaryHref={hero?.ctaPrimaryHref || "/products"}
+          secondaryLabel={pickText(lang, hero?.ctaSecondaryLabelEn, hero?.ctaSecondaryLabelAr) || t.contactSales}
+          secondaryHref={hero?.ctaSecondaryHref || "/contact"}
+          catalogHref={hasCatalog ? catalogHref : undefined}
+        />
+        <section aria-label={lang === "ar" ? "لمحة عن إيكوتك" : "ECOTECH at a glance"}>
           {/* Engineering Metrics Strip */}
           {statsItems.length > 0 && (
             <div className="border-t border-slate-200 bg-slate-50/90">
@@ -217,20 +119,20 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className={home.topCategories.length === 1 ? "mx-auto grid max-w-3xl grid-cols-1" : "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"}>
             {home.topCategories.map((cat) => {
               const subs = home.allCategories.filter((c) => c.parentId === cat.id);
               return (
                 <div
                   key={cat.id}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl"
+                  className={`group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-[#7A1D4B]/40 hover:shadow-xl ${home.topCategories.length === 1 ? "md:flex-row" : ""}`}
                 >
                   <Link
                     href={`/categories/${cat.slug}`}
-                    className="relative aspect-[16/10] overflow-hidden bg-slate-100"
+                    className={`relative aspect-[16/10] overflow-hidden bg-slate-100 ${home.topCategories.length === 1 ? "md:w-1/2 md:shrink-0" : ""}`}
                   >
                     <img
-                      src={cat.imageUrl || "/images/cat-racks.jpg"}
+                      src={cat.imageUrl || "/product-placeholder.svg"}
                       alt={pickText(lang, cat.nameEn, cat.nameAr)}
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
@@ -263,8 +165,8 @@ export default async function HomePage() {
                       >
                         <span>
                           {lang === "ar"
-                            ? `تصفح ${subs.length} أقسام فرعية`
-                            : `Explore ${subs.length} Subcategories`}
+                            ? (subs.length ? `تصفح ${subs.length} أقسام فرعية` : "تصفح المنتجات")
+                            : (subs.length ? `Explore ${subs.length} Subcategories` : "View Products")}
                         </span>
                         <ArrowIcon className="h-3.5 w-3.5" />
                       </Link>
@@ -297,16 +199,16 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className={home.featuredProducts.length === 1 ? "mx-auto grid max-w-3xl grid-cols-1" : "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"}>
               {home.featuredProducts.map((prod) => (
-                <ProductCard key={prod.id} product={prod} lang={lang} />
+                <ProductCard key={prod.id} product={prod} lang={lang} horizontal={home.featuredProducts.length === 1} />
               ))}
             </div>
           </div>
         </section>
 
         {/* 4. WHY CHOOSE ECOTECH */}
-        {why && (
+        {why && whyCards.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-10 max-w-2xl">
               <span className="text-xs font-bold uppercase tracking-widest text-[#7A1D4B]">
@@ -342,7 +244,7 @@ export default async function HomePage() {
         )}
 
         {/* 5. COMPANY CAPABILITIES & TECHNOLOGY HIGHLIGHTS */}
-        {capabilities && (
+        {capabilities && capItems.length > 0 && (
           <section className="border-y border-slate-200 bg-slate-900 py-16 text-white">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-10 grid grid-cols-1 items-end gap-6 lg:grid-cols-2">
@@ -387,7 +289,7 @@ export default async function HomePage() {
         )}
 
         {/* 6. FEATURED PROJECTS & APPLICATIONS */}
-        {projects && (
+        {projects && projectItems.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-10 max-w-2xl">
               <span className="text-xs font-bold uppercase tracking-widest text-[#7A1D4B]">
@@ -439,7 +341,7 @@ export default async function HomePage() {
         )}
 
         {/* 7. CERTIFICATIONS & QUALITY STANDARDS */}
-        {certifications && (
+        {certifications && certBadges.length > 0 && (
           <section className="border-y border-slate-200 bg-white py-14">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-8 text-center">
@@ -475,7 +377,7 @@ export default async function HomePage() {
         )}
 
         {/* 8. LATEST NEWS & UPDATES */}
-        {news && (
+        {news && newsPosts.length > 0 && (
           <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -541,7 +443,7 @@ export default async function HomePage() {
                 </div>
                 <div>
                   <strong>{lang === "ar" ? "العنوان:" : "Facility:"}</strong>{" "}
-                  <span>
+                  <span dir="ltr">
                     {pickText(
                       lang,
                       chrome.settings.address?.en,
@@ -566,4 +468,4 @@ export default async function HomePage() {
       />
     </div>
   );
-}
+    }

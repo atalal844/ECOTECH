@@ -18,6 +18,12 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://ecotech-ecotech6.vercel.app")
+  ),
   title: {
     default: "ECOTECH | Networking Infrastructure & Smart Power Solutions",
     template: "%s | ECOTECH",
@@ -33,7 +39,7 @@ export const metadata: Metadata = {
     title: "ECOTECH | Powering the Future of Network Infrastructure",
     description:
       "Advanced Networking, Fiber Optic and Smart Power Distribution Solutions.",
-    images: ["/images/hero-datacenter.jpg"],
+    images: ["/ecotech-social.png"],
     type: "website",
   },
 };
@@ -59,6 +65,7 @@ export default async function RootLayout({
             : "font-[family-name:var(--font-jakarta)]"
         }`}
       >
+        <a href="#main-content" className="skip-link">{lang === "ar" ? "انتقل إلى المحتوى" : "Skip to content"}</a>
         {children}
       </body>
     </html>

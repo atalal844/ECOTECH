@@ -137,7 +137,7 @@ export function SiteFooter({ lang, categories, settings }: SiteFooterProps) {
               {address && (
                 <li className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#F08B22]" />
-                  <span>{address}</span>
+                  <span dir="ltr">{address}</span>
                 </li>
               )}
               {phone && (
