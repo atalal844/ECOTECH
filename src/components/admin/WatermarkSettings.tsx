@@ -55,9 +55,11 @@ export function WatermarkSettings() {
             <div
               className="absolute inset-0"
               style={{
-                background: "url(/ecotech-logo.svg) center/92% auto no-repeat",
+                background: "#fff",
+                WebkitMask: "url(/ecotech-logo.svg) center/92% auto no-repeat",
+                mask: "url(/ecotech-logo.svg) center/92% auto no-repeat",
                 opacity: opacity / 100,
-                filter: "drop-shadow(0 0 3px rgba(255,255,255,.55))",
+                filter: "drop-shadow(0 0 1.5px rgba(0,0,0,.95)) drop-shadow(0 0 5px rgba(0,0,0,.55))",
               }}
             />
           )}
