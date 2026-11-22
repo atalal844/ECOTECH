@@ -183,13 +183,13 @@ export function UsersManager({ isSuperAdmin }: { isSuperAdmin: boolean }) {
               />
               <input
                 required
-                minLength={8}
+                minLength={10}
                 type="password"
                 value={newUser.password}
                 onChange={(e) =>
                   setNewUser({ ...newUser, password: e.target.value })
                 }
-                placeholder="Password (min 8 chars)"
+                placeholder="Password (min 10 chars)"
                 className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs"
               />
               <select
