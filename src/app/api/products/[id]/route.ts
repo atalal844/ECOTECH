@@ -8,7 +8,7 @@ import {
   productSpecifications,
 } from "@/db";
 import { asc, eq, ne, sql } from "drizzle-orm";
-import { requireAuth, getCurrentUser, hasPermission } from "@/lib/auth";
+import { requireAuth, requireAdmin, getCurrentUser, hasPermission } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import { productPayloadSchema } from "../route";
 
@@ -415,7 +415,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { user, errorResponse } = await requireAuth("products.write");
+    const { user, errorResponse } = await requireAdmin("products.write");
     if (errorResponse) return errorResponse;
 
     const { id } = await context.params;
