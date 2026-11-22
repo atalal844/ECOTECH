@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { db, users } from "@/db";
-import { eq } from "drizzle-orm";
+import { db, users, userRoles } from "@/db";
+import { and, eq } from "drizzle-orm";
 import { requireAuth, hashPassword } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 
@@ -10,8 +10,20 @@ const updateUserSchema = z.object({
   fullNameAr: z.string().max(140).nullable().optional(),
   roleId: z.number().int().positive().optional(),
   isActive: z.boolean().optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().min(10).max(200).optional(),
 });
+
+/** True when removing super-admin power from this user would leave no active super admin. */
+async function wouldRemoveLastSuperAdmin(targetId: number): Promise<boolean> {
+  const active = await db
+    .select({ id: users.id })
+    .from(users)
+    .innerJoin(userRoles, eq(users.roleId, userRoles.id))
+    .where(and(eq(userRoles.slug, "super_admin"), eq(users.isActive, true)));
+  return active.length === 1 && active[0].id === targetId;
+}
+
+const LAST_SUPER = "This is the last active Super Admin. Create or keep another Super Admin first.";
 
 export async function PATCH(
   request: NextRequest,
@@ -31,6 +43,18 @@ export async function PATCH(
     const parsed = updateUserSchema.safeParse(body);
     if (!parsed.success) {
       return Response.json({ error: "Validation failed" }, { status: 400 });
+    }
+
+    const [superRole] = await db
+      .select({ id: userRoles.id })
+      .from(userRoles)
+      .where(eq(userRoles.slug, "super_admin"))
+      .limit(1);
+    const losesSuper =
+      (parsed.data.roleId !== undefined && parsed.data.roleId !== superRole?.id) ||
+      parsed.data.isActive === false;
+    if (losesSuper && (await wouldRemoveLastSuperAdmin(targetId))) {
+      return Response.json({ error: LAST_SUPER }, { status: 400 });
     }
 
     const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -99,6 +123,10 @@ export async function DELETE(
         { error: "Cannot delete your own logged-in account." },
         { status: 400 }
       );
+    }
+
+    if (await wouldRemoveLastSuperAdmin(targetId)) {
+      return Response.json({ error: LAST_SUPER }, { status: 400 });
     }
 
     const [deleted] = await db
