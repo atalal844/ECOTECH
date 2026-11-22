@@ -85,6 +85,42 @@ function clientHasPerm(user: AuthUser, perm: string): boolean {
 export function AdminShell({ user }: { user: AuthUser }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [newInquiries, setNewInquiries] = useState(0);
+  const canSeeInquiries = clientHasPerm(user, "inquiries.read");
+
+  // Badge: number of inquiries still marked "new". Checked once a minute while
+  // the tab is open and visible, and again whenever the menu tab changes.
+  useEffect(() => {
+    if (!canSeeInquiries) return;
+    let stopped = false;
+    const check = async () => {
+      if (document.hidden) return;
+      try {
+        const res = await fetch("/api/inquiries/unread-count", {
+          cache: "no-store",
+        });
+        if (res.ok && !stopped) {
+          const d = await res.json();
+          setNewInquiries(Number(d.count) || 0);
+        }
+      } catch {
+        /* keep the last number */
+      }
+    };
+    check();
+    const t = setInterval(check, 60_000);
+    return () => {
+      stopped = true;
+      clearInterval(t);
+    };
+  }, [canSeeInquiries, activeTab]);
+
+  useEffect(() => {
+    if (newInquiries > 0) {
+      document.title = `(${newInquiries}) ECOTECH Admin`;
+    }
+    return () => {};
+  }, [newInquiries]);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [overview, setOverview] = useState<OverviewData | null>(null);
 
@@ -227,6 +263,14 @@ export function AdminShell({ user }: { user: AuthUser }) {
                   }`}
                 />
                 <span>{item.label}</span>
+                {item.id === "inquiries" && newInquiries > 0 && (
+                  <span
+                    className="ms-auto inline-flex min-w-[20px] items-center justify-center rounded-full bg-[#F08B22] px-1.5 py-0.5 text-[10px] font-extrabold text-white"
+                    title={`${newInquiries} new inquiries`}
+                  >
+                    {newInquiries}
+                  </span>
+                )}
               </button>
             );
           })}
