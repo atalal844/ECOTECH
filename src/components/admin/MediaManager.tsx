@@ -38,7 +38,9 @@ export interface MediaItem {
 export function MediaManager({
   onSelectMedia,
   pickerMode = false,
+  canDelete = false,
 }: {
+  canDelete?: boolean;
   onSelectMedia?: (media: MediaItem) => void;
   pickerMode?: boolean;
 }) {
@@ -409,14 +411,14 @@ export function MediaManager({
                             }}
                           />
                         </label>
-                        <button
+                        {canDelete && <button
                           type="button"
                           onClick={() => handleDelete(item)}
                           className="ms-auto rounded-lg border border-red-200 p-1.5 text-red-600 hover:bg-red-50"
                           title="Delete file"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </button>}
                       </>
                     )}
                   </div>
