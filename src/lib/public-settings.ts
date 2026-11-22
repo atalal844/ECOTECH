@@ -18,3 +18,4 @@ export const PUBLIC_SETTING_KEYS = new Set([
 ]);
 
 export const isPublicSettingKey = (key: string) => PUBLIC_SETTING_KEYS.has(key);
+// rebuild trigger
