@@ -33,7 +33,7 @@ interface ProductOption {
   sku: string;
 }
 
-export function DocumentsManager() {
+export function DocumentsManager({ canDelete = false }: { canDelete?: boolean }) {
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [products, setProducts] = useState<ProductOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -339,13 +339,13 @@ export function DocumentsManager() {
                         >
                           <Download className="h-3.5 w-3.5" />
                         </a>
-                        <button
+                        {canDelete && <button
                           type="button"
                           onClick={() => handleDelete(d.id)}
                           className="rounded-lg border border-red-200 p-1.5 text-red-600 hover:bg-red-50"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </button>}
                       </div>
                     </td>
                   </tr>
