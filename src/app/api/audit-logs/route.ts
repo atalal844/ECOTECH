@@ -1,10 +1,10 @@
 import { db, activityLogs } from "@/db";
 import { desc } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const { errorResponse } = await requireAuth("dashboard.view");
+    const { errorResponse } = await requireAdmin("dashboard.view");
     if (errorResponse) return errorResponse;
 
     const logs = await db
