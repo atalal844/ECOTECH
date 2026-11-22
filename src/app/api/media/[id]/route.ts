@@ -3,7 +3,7 @@ import path from "path";
 import { NextRequest } from "next/server";
 import { db, mediaLibrary } from "@/db";
 import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import {
   UPLOAD_ROOT,
@@ -136,7 +136,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { user, errorResponse } = await requireAuth("media.write");
+    const { user, errorResponse } = await requireAdmin("media.write");
     if (errorResponse) return errorResponse;
 
     const { id } = await context.params;
