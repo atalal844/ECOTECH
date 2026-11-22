@@ -108,7 +108,7 @@ interface ProductRow {
   specifications: ProductSpecDraft[];
 }
 
-export function ProductsManager() {
+export function ProductsManager({ canDelete = false }: { canDelete?: boolean }) {
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
@@ -663,14 +663,14 @@ export function ProductsManager() {
                         >
                           <Copy className="h-3.5 w-3.5" />
                         </button>
-                        <button
+                        {canDelete && <button
                           type="button"
                           onClick={() => handleDelete(p)}
                           className="rounded-lg border border-red-200 p-1.5 text-red-600 hover:bg-red-50"
                           title="Delete"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        </button>}
                       </div>
                     </td>
                   </tr>
