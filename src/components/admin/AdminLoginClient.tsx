@@ -11,6 +11,8 @@ export function AdminLoginClient() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [need2fa, setNeed2fa] = useState(false);
+  const [code, setCode] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -20,9 +22,15 @@ export function AdminLoginClient() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, code: need2fa ? code : undefined }),
       });
       const data = await res.json();
+      if (data.requires2fa) {
+        setNeed2fa(true);
+        setLoading(false);
+        if (!res.ok) setError(data.error || "Invalid verification code.");
+        return;
+      }
       if (!res.ok) {
         setError(data.error || "Invalid credentials.");
         setLoading(false);
@@ -98,6 +106,26 @@ export function AdminLoginClient() {
               </div>
             </div>
 
+            {need2fa && (
+              <div>
+                <label className="mb-1.5 block text-xs font-bold text-slate-700">
+                  Verification code (authenticator app)
+                </label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  autoFocus
+                  required
+                  maxLength={8}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="123456"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm tracking-widest outline-none focus:border-[#7A1D4B] focus:bg-white"
+                />
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
@@ -106,6 +134,15 @@ export function AdminLoginClient() {
               {loading ? "Authenticating..." : "Sign In to Dashboard"}
             </button>
           </form>
+
+          <div className="mt-4 text-center">
+            <Link
+              href="/admin/forgot-password"
+              className="text-xs font-semibold text-[#7A1D4B] hover:underline"
+            >
+              Forgot your password?
+            </Link>
+          </div>
 
           <div className="mt-6 text-center">
             <Link

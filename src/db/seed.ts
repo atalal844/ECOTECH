@@ -18,7 +18,6 @@ import {
   inquiryNotes,
 } from "@/db";
 import { count, eq } from "drizzle-orm";
-import { hashPassword } from "@/lib/auth";
 import { buildEcotechPdf } from "@/lib/pdf-generator";
 import { UPLOAD_ROOT } from "@/lib/storage";
 
@@ -28,7 +27,7 @@ async function writePdfToStorage(
   folder: string,
   fileName: string,
   buffer: Buffer,
-  uploadedById: number
+  uploadedById: number | null
 ) {
   const dir = path.join(UPLOAD_ROOT, folder);
   await fs.mkdir(dir, { recursive: true });
@@ -132,46 +131,13 @@ export async function ensureDatabaseSeeded(): Promise<void> {
         ])
         .returning();
 
-      const roleMap = new Map(insertedRoles.map((r) => [r.slug, r.id]));
 
-      // 2. Seed Users
-      const [superAdmin] = await db
-        .insert(users)
-        .values([
-          {
-            email: "superadmin@ecotech.local",
-            passwordHash: await hashPassword("EcoTech@2026!"),
-            fullName: "Eng. Tariq Al-Mansoor",
-            fullNameAr: "م. طارق المنصور",
-            roleId: roleMap.get("super_admin")!,
-            isActive: true,
-          },
-          {
-            email: "admin@ecotech.local",
-            passwordHash: await hashPassword("Admin@2026!"),
-            fullName: "Sarah Al-Harbi",
-            fullNameAr: "سارة الحربي",
-            roleId: roleMap.get("admin")!,
-            isActive: true,
-          },
-          {
-            email: "editor@ecotech.local",
-            passwordHash: await hashPassword("Editor@2026!"),
-            fullName: "Omar Al-Zahrani",
-            fullNameAr: "عمر الزهراني",
-            roleId: roleMap.get("editor")!,
-            isActive: true,
-          },
-          {
-            email: "sales@ecotech.local",
-            passwordHash: await hashPassword("Sales@2026!"),
-            fullName: "Nadia Al-Qahtani",
-            fullNameAr: "نادية القحطاني",
-            roleId: roleMap.get("sales_manager")!,
-            isActive: true,
-          },
-        ])
-        .returning();
+      // 2. No demo users are created. The first administrator is created
+      // by the site owner, never from default credentials in code.
+      const superAdmin: { id: number | null; fullName: string } = {
+        id: null,
+        fullName: "ECOTECH Team",
+      };
 
       // 3. Seed Catalog & Company Profile PDFs in Storage + Media Library
       const masterCatalogPdf = buildEcotechPdf({
