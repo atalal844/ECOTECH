@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { db, productDocuments, products } from "@/db";
 import { desc, eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 
 const attachDocSchema = z.object({
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { user, errorResponse } = await requireAuth("documents.write");
+    const { user, errorResponse } = await requireAdmin("documents.write");
     if (errorResponse) return errorResponse;
 
     const id = Number(request.nextUrl.searchParams.get("id"));
