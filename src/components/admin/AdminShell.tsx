@@ -397,7 +397,7 @@ export function AdminShell({ user }: { user: AuthUser }) {
           {activeTab === "media" && <MediaManager />}
           {activeTab === "documents" && <DocumentsManager />}
           {activeTab === "cms" && <CmsSettingsManager />}
-          {activeTab === "inquiries" && <InquiriesManager />}
+          {activeTab === "inquiries" && <InquiriesManager isSuperAdmin={user.roleSlug === "super_admin"} />}
           {activeTab === "users" && (
             <UsersManager isSuperAdmin={user.roleSlug === "super_admin"} />
           )}
