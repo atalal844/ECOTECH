@@ -159,3 +159,30 @@ export async function requireAuth(requiredPermission?: string): Promise<{
   }
   return { user, errorResponse: null };
 }
+
+export function isAdminRole(user: AuthUser | null): boolean {
+  return !!user && (user.roleSlug === "super_admin" || user.roleSlug === "admin");
+}
+
+/**
+ * Like requireAuth, but only Admin and Super Admin pass. Used for deleting
+ * content, site-wide settings and the audit log. Editors and Sales Managers
+ * are refused on the server, whatever the screen shows.
+ */
+export async function requireAdmin(requiredPermission?: string): Promise<{
+  user: AuthUser | null;
+  errorResponse: Response | null;
+}> {
+  const res = await requireAuth(requiredPermission);
+  if (res.errorResponse) return res;
+  if (!isAdminRole(res.user)) {
+    return {
+      user: null,
+      errorResponse: Response.json(
+        { error: "Only an Admin or Super Admin can do this." },
+        { status: 403 }
+      ),
+    };
+  }
+  return res;
+}
