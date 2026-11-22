@@ -20,7 +20,7 @@ interface CategoryRow {
   productCount?: number;
 }
 
-export function CategoriesManager() {
+export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }) {
   const [categories, setCategories] = useState<CategoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -245,13 +245,13 @@ export function CategoriesManager() {
                           >
                             <Edit3 className="h-3.5 w-3.5" />
                           </button>
-                          <button
+                          {canDelete && <button
                             type="button"
                             onClick={() => handleDelete(c)}
                             className="rounded-lg border border-red-200 p-1.5 text-red-600 hover:bg-red-50"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
-                          </button>
+                          </button>}
                         </div>
                       </td>
                     </tr>
