@@ -1,8 +1,8 @@
 import { NextRequest, after } from "next/server";
 import { notifyNewInquiry } from "@/lib/inquiry-notify";
 import { z } from "zod";
-import { db, inquiries, inquiryNotes, products } from "@/db";
-import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
+import { db, inquiries, inquiryNotes, products, users } from "@/db";
+import { and, desc, eq, gte, ilike, inArray, isNull, lt, ne, or } from "drizzle-orm";
 import { requireAuth } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -32,6 +32,25 @@ export async function GET(request: NextRequest) {
     const conditions = [];
     if (status && status !== "all") {
       conditions.push(eq(inquiries.status, status));
+    } else {
+      // Archived inquiries stay out of the normal list.
+      conditions.push(ne(inquiries.status, "archived"));
+    }
+    const assigned = sp.get("assigned")?.trim() || "";
+    if (assigned === "unassigned") {
+      conditions.push(isNull(inquiries.assignedToId));
+    } else if (/^\d+$/.test(assigned)) {
+      conditions.push(eq(inquiries.assignedToId, Number(assigned)));
+    }
+    const from = sp.get("from")?.trim() || "";
+    const to = sp.get("to")?.trim() || "";
+    if (/^\d{4}-\d{2}-\d{2}$/.test(from)) {
+      conditions.push(gte(inquiries.createdAt, new Date(`${from}T00:00:00Z`)));
+    }
+    if (/^\d{4}-\d{2}-\d{2}$/.test(to)) {
+      const end = new Date(`${to}T00:00:00Z`);
+      end.setUTCDate(end.getUTCDate() + 1);
+      conditions.push(lt(inquiries.createdAt, end));
     }
     if (q) {
       const pattern = `%${q}%`;
@@ -68,7 +87,13 @@ export async function GET(request: NextRequest) {
       notes: notes.filter((n) => n.inquiryId === row.id),
     }));
 
-    return Response.json({ inquiries: enriched });
+    const assignees = await db
+      .select({ id: users.id, fullName: users.fullName })
+      .from(users)
+      .where(eq(users.isActive, true))
+      .orderBy(users.fullName);
+
+    return Response.json({ inquiries: enriched, assignees });
   } catch (err) {
     console.error("GET /api/inquiries error:", err);
     return Response.json({ error: "Failed to load inquiries" }, { status: 500 });
