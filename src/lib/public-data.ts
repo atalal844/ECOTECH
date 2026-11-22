@@ -13,6 +13,7 @@ import {
 } from "@/db";
 import { asc, desc, eq, inArray } from "drizzle-orm";
 import { ensureDatabaseSeeded } from "@/db/seed";
+import { isPublicSettingKey } from "@/lib/public-settings";
 import type { Lang } from "./i18n";
 
 // Contact data approved by the owner from https://ecotel.holdings/contact-us/.
@@ -112,6 +113,7 @@ export async function getPublicSiteChrome() {
 
   const settings: Record<string, { en: string; ar: string; json: Record<string, unknown> | null }> = {};
   for (const s of settingsRows) {
+    if (!isPublicSettingKey(s.key)) continue;
     settings[s.key] = {
       en: s.valueEn || "",
       ar: s.valueAr || s.valueEn || "",
