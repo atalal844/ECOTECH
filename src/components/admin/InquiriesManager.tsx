@@ -30,6 +30,7 @@ interface InquiryRow {
   quantity: string | null;
   message: string;
   status: string;
+  assignedToId: number | null;
   createdAt: string;
   notes: InquiryNote[];
 }
@@ -40,13 +41,23 @@ const STATUS_OPTIONS = [
   "quoted",
   "completed",
   "cancelled",
+  "archived",
 ] as const;
 
-export function InquiriesManager() {
+interface Assignee {
+  id: number;
+  fullName: string;
+}
+
+export function InquiriesManager({ isSuperAdmin = false }: { isSuperAdmin?: boolean }) {
   const [inquiries, setInquiries] = useState<InquiryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
   const [q, setQ] = useState("");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [assignedFilter, setAssignedFilter] = useState("all");
+  const [assignees, setAssignees] = useState<Assignee[]>([]);
   const [selected, setSelected] = useState<InquiryRow | null>(null);
   const [noteText, setNoteText] = useState("");
   const [feedback, setFeedback] = useState<{
@@ -60,12 +71,16 @@ export function InquiriesManager() {
       const params = new URLSearchParams();
       if (statusFilter !== "all") params.set("status", statusFilter);
       if (q.trim()) params.set("q", q.trim());
+      if (from) params.set("from", from);
+      if (to) params.set("to", to);
+      if (assignedFilter !== "all") params.set("assigned", assignedFilter);
 
       const res = await fetch(`/api/inquiries?${params.toString()}`);
       if (res.ok) {
         const data = await res.json();
         const list: InquiryRow[] = data.inquiries || [];
         setInquiries(list);
+        setAssignees(data.assignees || []);
         if (selected) {
           const updatedSel = list.find((i) => i.id === selected.id) || null;
           setSelected(updatedSel);
@@ -74,11 +89,11 @@ export function InquiriesManager() {
     } finally {
       setLoading(false);
     }
-  }, [statusFilter, q, selected?.id]);
+  }, [statusFilter, q, from, to, assignedFilter, selected?.id]);
 
   useEffect(() => {
     load();
-  }, [statusFilter, q]);
+  }, [statusFilter, q, from, to, assignedFilter]);
 
   async function handleStatusChange(inqId: number, status: string) {
     const res = await fetch(`/api/inquiries/${inqId}`, {
@@ -91,6 +106,38 @@ export function InquiriesManager() {
       load();
     } else {
       setFeedback({ type: "error", text: "Failed to update status." });
+    }
+  }
+
+  async function handleAssign(inqId: number, value: string) {
+    const res = await fetch(`/api/inquiries/${inqId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ assignedToId: value ? Number(value) : null }),
+    });
+    setFeedback(
+      res.ok
+        ? { type: "success", text: "Assignment updated." }
+        : { type: "error", text: "Failed to update assignment." }
+    );
+    if (res.ok) load();
+  }
+
+  async function handleDelete(inq: InquiryRow) {
+    if (
+      !window.confirm(
+        `Delete ${inq.referenceCode} permanently? Its notes are deleted too. This cannot be undone. Archive it instead if you may need it later.`
+      )
+    )
+      return;
+    const res = await fetch(`/api/inquiries/${inq.id}`, { method: "DELETE" });
+    if (res.ok) {
+      setSelected(null);
+      setFeedback({ type: "success", text: `Deleted ${inq.referenceCode}.` });
+      load();
+    } else {
+      const d = await res.json().catch(() => ({}));
+      setFeedback({ type: "error", text: d.error || "Failed to delete." });
     }
   }
 
@@ -190,6 +237,52 @@ export function InquiriesManager() {
             </option>
           ))}
         </select>
+        <select
+          value={assignedFilter}
+          onChange={(e) => setAssignedFilter(e.target.value)}
+          className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold outline-none"
+        >
+          <option value="all">Anyone</option>
+          <option value="unassigned">Unassigned</option>
+          {assignees.map((a) => (
+            <option key={a.id} value={String(a.id)}>
+              {a.fullName}
+            </option>
+          ))}
+        </select>
+        <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
+          From
+          <input
+            type="date"
+            value={from}
+            onChange={(e) => setFrom(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none"
+          />
+        </label>
+        <label className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500">
+          To
+          <input
+            type="date"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-slate-50 px-2 py-1.5 text-xs outline-none"
+          />
+        </label>
+        {(from || to || q || assignedFilter !== "all" || statusFilter !== "all") && (
+          <button
+            type="button"
+            onClick={() => {
+              setQ("");
+              setFrom("");
+              setTo("");
+              setAssignedFilter("all");
+              setStatusFilter("all");
+            }}
+            className="text-[11px] font-bold text-[#7A1D4B] underline"
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -261,6 +354,10 @@ export function InquiriesManager() {
                         >
                           {inq.status.replace("_", " ")}
                         </span>
+                        <div className="mt-1 text-[10px] text-slate-400">
+                          {assignees.find((a) => a.id === inq.assignedToId)
+                            ?.fullName || "Unassigned"}
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -301,6 +398,45 @@ export function InquiriesManager() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <label className="flex items-center gap-1.5 font-semibold text-slate-600">
+                  Assigned to
+                  <select
+                    value={selected.assignedToId ?? ""}
+                    onChange={(e) => handleAssign(selected.id, e.target.value)}
+                    className="rounded-xl border border-slate-200 bg-slate-50 px-2.5 py-1.5 font-semibold text-slate-800"
+                  >
+                    <option value="">Unassigned</option>
+                    {assignees.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.fullName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleStatusChange(
+                      selected.id,
+                      selected.status === "archived" ? "new" : "archived"
+                    )
+                  }
+                  className="rounded-xl border border-slate-200 px-3 py-1.5 font-bold text-slate-700 hover:bg-slate-50"
+                >
+                  {selected.status === "archived" ? "Restore" : "Archive"}
+                </button>
+                {isSuperAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(selected)}
+                    className="rounded-xl border border-red-200 px-3 py-1.5 font-bold text-red-700 hover:bg-red-50"
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-50 p-3">
