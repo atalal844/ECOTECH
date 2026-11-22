@@ -41,7 +41,7 @@ interface WebsitePageRow {
   structuredData: Record<string, unknown>;
 }
 
-export function CmsSettingsManager() {
+export function CmsSettingsManager({ canEditSettings = false }: { canEditSettings?: boolean }) {
   const [subTab, setSubTab] = useState<"homepage" | "about" | "services" | "watermark" | "settings">(
     "homepage"
   );
@@ -211,7 +211,13 @@ export function CmsSettingsManager() {
               ["watermark", "Watermark"],
               ["settings", "Contact & Footer Settings"],
             ] as const
-          ).map(([k, label]) => (
+          )
+            .filter(
+              ([k]) =>
+                canEditSettings ||
+                (k !== "services" && k !== "watermark" && k !== "settings")
+            )
+            .map(([k, label]) => (
             <button
               key={k}
               type="button"
