@@ -168,6 +168,9 @@ export function AdminShell({ user }: { user: AuthUser }) {
     },
   ];
 
+  const isAdminUser =
+    user.roleSlug === "super_admin" || user.roleSlug === "admin";
+
   const visibleNav = navItems.filter((n) => n.visible);
 
   return (
@@ -392,11 +395,11 @@ export function AdminShell({ user }: { user: AuthUser }) {
             </div>
           )}
 
-          {activeTab === "products" && <ProductsManager />}
-          {activeTab === "categories" && <CategoriesManager />}
-          {activeTab === "media" && <MediaManager />}
-          {activeTab === "documents" && <DocumentsManager />}
-          {activeTab === "cms" && <CmsSettingsManager />}
+          {activeTab === "products" && <ProductsManager canDelete={isAdminUser} />}
+          {activeTab === "categories" && <CategoriesManager canDelete={isAdminUser} />}
+          {activeTab === "media" && <MediaManager canDelete={isAdminUser} />}
+          {activeTab === "documents" && <DocumentsManager canDelete={isAdminUser} />}
+          {activeTab === "cms" && <CmsSettingsManager canEditSettings={isAdminUser} />}
           {activeTab === "inquiries" && <InquiriesManager />}
           {activeTab === "users" && (
             <UsersManager isSuperAdmin={user.roleSlug === "super_admin"} />
