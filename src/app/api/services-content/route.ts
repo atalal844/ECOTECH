@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { db, companySettings } from "@/db";
 import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import { SERVICES_DEFAULT } from "@/lib/services-content";
 import {
@@ -19,7 +19,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { user, errorResponse } = await requireAuth("homepage.write");
+    const { user, errorResponse } = await requireAdmin("homepage.write");
     if (errorResponse) return errorResponse;
 
     const body = await request.json().catch(() => null);
@@ -72,7 +72,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const { user, errorResponse } = await requireAuth("homepage.write");
+    const { user, errorResponse } = await requireAdmin("homepage.write");
     if (errorResponse) return errorResponse;
     await db.delete(companySettings).where(eq(companySettings.key, SERVICES_SETTING_KEY));
     await logActivity({
