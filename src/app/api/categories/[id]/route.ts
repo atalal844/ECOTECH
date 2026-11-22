@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 import { db, productCategories, products } from "@/db";
 import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 
 const updateCategorySchema = z.object({
@@ -95,7 +95,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { user, errorResponse } = await requireAuth("categories.write");
+    const { user, errorResponse } = await requireAdmin("categories.write");
     if (errorResponse) return errorResponse;
 
     const { id } = await context.params;
