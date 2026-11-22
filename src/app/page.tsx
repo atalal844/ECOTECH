@@ -1,4 +1,5 @@
 import React from "react";
+import { pageMetadata } from "@/lib/seo";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -25,6 +26,10 @@ import { CinematicIntro } from "@/components/public/HeroProductShowcase";
 import { InquiryForm } from "@/components/public/InquiryForm";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return pageMetadata("home");
+}
 
 export default async function HomePage() {
   const [lang, chrome, home] = await Promise.all([

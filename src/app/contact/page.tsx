@@ -1,4 +1,5 @@
 import React from "react";
+import { pageMetadata } from "@/lib/seo";
 import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
 import { getServerLang, getPublicSiteChrome, VERIFIED_CONTACT_OFFICES } from "@/lib/public-data";
 import { UI_LABELS, pickText } from "@/lib/i18n";
@@ -7,6 +8,10 @@ import { SiteFooter } from "@/components/public/SiteFooter";
 import { InquiryForm } from "@/components/public/InquiryForm";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata() {
+  return pageMetadata("contact");
+}
 
 export default async function ContactPage({
   searchParams,

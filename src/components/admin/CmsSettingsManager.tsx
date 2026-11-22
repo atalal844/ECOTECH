@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Save, CheckCircle2, AlertCircle, X } from "lucide-react";
 import { ServicesEditor } from "./ServicesEditor";
 import { WatermarkSettings } from "./WatermarkSettings";
+import { SeoPagesEditor } from "./SeoPagesEditor";
 
 interface HomepageSectionRow {
   id: number;
@@ -42,7 +43,7 @@ interface WebsitePageRow {
 }
 
 export function CmsSettingsManager() {
-  const [subTab, setSubTab] = useState<"homepage" | "about" | "services" | "watermark" | "settings">(
+  const [subTab, setSubTab] = useState<"homepage" | "about" | "services" | "seo" | "watermark" | "settings">(
     "homepage"
   );
   const [sections, setSections] = useState<HomepageSectionRow[]>([]);
@@ -208,6 +209,7 @@ export function CmsSettingsManager() {
               ["homepage", "Homepage Sections"],
               ["about", "About Us Page"],
               ["services", "Services"],
+              ["seo", "Page SEO"],
               ["watermark", "Watermark"],
               ["settings", "Contact & Footer Settings"],
             ] as const
@@ -251,6 +253,7 @@ export function CmsSettingsManager() {
       )}
 
       {subTab === "services" && <ServicesEditor />}
+      {subTab === "seo" && <SeoPagesEditor />}
       {subTab === "watermark" && <WatermarkSettings />}
 
       {/* 1. HOMEPAGE SECTIONS */}
