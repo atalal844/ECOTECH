@@ -1,14 +1,17 @@
 import { NextRequest } from "next/server";
 import { db, companySettings } from "@/db";
 import { eq } from "drizzle-orm";
-import { requireAuth } from "@/lib/auth";
+import { isPublicSettingKey } from "@/lib/public-settings";
+import { requireAuth, requireAdmin } from "@/lib/auth";
 import { logActivity, getClientIp } from "@/lib/audit";
 import { ensureCmsSeeded } from "@/db/seed-cms";
 
 export async function GET() {
   try {
     await ensureCmsSeeded();
-    const rows = await db.select().from(companySettings);
+    const rows = (await db.select().from(companySettings)).filter((r) =>
+      isPublicSettingKey(r.key)
+    );
     return Response.json({ settings: rows });
   } catch (err) {
     console.error("GET /api/settings error:", err);
@@ -18,7 +21,7 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
-    const { user, errorResponse } = await requireAuth("homepage.write");
+    const { user, errorResponse } = await requireAdmin("homepage.write");
     if (errorResponse) return errorResponse;
 
     const body = await request.json().catch(() => null);
@@ -27,7 +30,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     for (const item of body.items) {
-      if (!item.key) continue;
+      if (!item.key || !isPublicSettingKey(String(item.key))) continue;
       const existing = await db
         .select()
         .from(companySettings)
@@ -64,7 +67,9 @@ export async function PATCH(request: NextRequest) {
       ipAddress: getClientIp(request),
     });
 
-    const rows = await db.select().from(companySettings);
+    const rows = (await db.select().from(companySettings)).filter((r) =>
+      isPublicSettingKey(r.key)
+    );
     return Response.json({ settings: rows });
   } catch (err) {
     console.error("PATCH /api/settings error:", err);
