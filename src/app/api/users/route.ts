@@ -7,7 +7,7 @@ import { logActivity, getClientIp } from "@/lib/audit";
 
 const createUserSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8),
+  password: z.string().min(10).max(200),
   fullName: z.string().min(2).max(140),
   fullNameAr: z.string().max(140).nullable().optional(),
   roleId: z.number().int().positive(),
