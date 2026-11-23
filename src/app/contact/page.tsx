@@ -96,7 +96,7 @@ export default async function ContactPage({
                       <div className="text-xs font-bold uppercase text-slate-400">
                         {lang === "ar" ? "العنوان" : "Business Address"}
                       </div>
-                      <div className="mt-0.5 font-medium" dir="ltr">{address}</div>
+                      <div className="mt-0.5 font-medium" dir={lang === "ar" ? "rtl" : "ltr"}>{address}</div>
                     </div>
                   </div>
                 )}
@@ -237,4 +237,4 @@ export default async function ContactPage({
       />
     </div>
   );
-          }
+}
