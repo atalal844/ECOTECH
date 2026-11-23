@@ -11,6 +11,10 @@ interface CategoryRow {
   nameAr: string;
   descriptionEn: string | null;
   descriptionAr: string | null;
+  seoTitleEn?: string | null;
+  seoTitleAr?: string | null;
+  seoDescriptionEn?: string | null;
+  seoDescriptionAr?: string | null;
   imageUrl: string | null;
   bannerUrl: string | null;
   catalogUrl: string | null;
@@ -34,6 +38,10 @@ export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }
     nameAr: "",
     descriptionEn: "",
     descriptionAr: "",
+    seoTitleEn: "",
+    seoTitleAr: "",
+    seoDescriptionEn: "",
+    seoDescriptionAr: "",
     imageUrl: "/images/cat-racks.jpg",
     bannerUrl: "/images/cat-racks.jpg",
     catalogUrl: "",
@@ -68,6 +76,10 @@ export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }
       nameAr: "",
       descriptionEn: "",
       descriptionAr: "",
+      seoTitleEn: "",
+      seoTitleAr: "",
+      seoDescriptionEn: "",
+      seoDescriptionAr: "",
       imageUrl: "/images/cat-racks.jpg",
       bannerUrl: "/images/cat-racks.jpg",
       catalogUrl: "",
@@ -87,6 +99,10 @@ export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }
       nameAr: c.nameAr,
       descriptionEn: c.descriptionEn || "",
       descriptionAr: c.descriptionAr || "",
+      seoTitleEn: c.seoTitleEn || "",
+      seoTitleAr: c.seoTitleAr || "",
+      seoDescriptionEn: c.seoDescriptionEn || "",
+      seoDescriptionAr: c.seoDescriptionAr || "",
       imageUrl: c.imageUrl || "",
       bannerUrl: c.bannerUrl || "",
       catalogUrl: c.catalogUrl || "",
@@ -106,6 +122,10 @@ export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }
       parentId: form.parentId ? Number(form.parentId) : null,
       displayOrder: Number(form.displayOrder) || 0,
       catalogUrl: form.catalogUrl || null,
+      seoTitleEn: form.seoTitleEn || null,
+      seoTitleAr: form.seoTitleAr || null,
+      seoDescriptionEn: form.seoDescriptionEn || null,
+      seoDescriptionAr: form.seoDescriptionAr || null,
     };
 
     const url = editingId ? `/api/categories/${editingId}` : "/api/categories";
@@ -417,6 +437,28 @@ export function CategoriesManager({ canDelete = false }: { canDelete?: boolean }
                   }
                   className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs"
                 />
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <p className="mb-2 text-xs font-bold text-[#250C52]">SEO (search results and sharing, optional)</p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-bold text-slate-700">SEO title (English)</label>
+                  <input value={form.seoTitleEn} onChange={(e) => setForm({ ...form, seoTitleEn: e.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-bold text-slate-700">SEO title (Arabic)</label>
+                  <input dir="rtl" value={form.seoTitleAr} onChange={(e) => setForm({ ...form, seoTitleAr: e.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-bold text-slate-700">SEO description (English)</label>
+                  <textarea rows={2} value={form.seoDescriptionEn} onChange={(e) => setForm({ ...form, seoDescriptionEn: e.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs" />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-bold text-slate-700">SEO description (Arabic)</label>
+                  <textarea rows={2} dir="rtl" value={form.seoDescriptionAr} onChange={(e) => setForm({ ...form, seoDescriptionAr: e.target.value })} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-xs" />
+                </div>
               </div>
             </div>
 

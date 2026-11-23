@@ -7,7 +7,7 @@ import { logActivity, getClientIp } from "@/lib/audit";
 
 const updateSchema = z.object({
   status: z
-    .enum(["new", "in_progress", "quoted", "completed", "cancelled"])
+    .enum(["new", "in_progress", "quoted", "completed", "cancelled", "archived"])
     .optional(),
   assignedToId: z.number().int().positive().nullable().optional(),
 });
@@ -105,5 +105,47 @@ export async function POST(
   } catch (err) {
     console.error("POST /api/inquiries/[id] note error:", err);
     return Response.json({ error: "Failed to save note" }, { status: 500 });
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { user, errorResponse } = await requireAuth("inquiries.write");
+    if (errorResponse) return errorResponse;
+    if (user!.roleSlug !== "super_admin") {
+      return Response.json(
+        { error: "Only a super admin can delete inquiries." },
+        { status: 403 }
+      );
+    }
+    const { id } = await context.params;
+    const inqId = Number(id);
+    if (!inqId || Number.isNaN(inqId)) {
+      return Response.json({ error: "Invalid inquiry ID" }, { status: 400 });
+    }
+    const [deleted] = await db
+      .delete(inquiries)
+      .where(eq(inquiries.id, inqId))
+      .returning({ id: inquiries.id, referenceCode: inquiries.referenceCode });
+    if (!deleted) {
+      return Response.json({ error: "Inquiry not found" }, { status: 404 });
+    }
+    await logActivity({
+      userId: user!.id,
+      userEmail: user!.email,
+      userRole: user!.roleSlug,
+      action: "inquiry_deleted",
+      entityType: "inquiry",
+      entityId: inqId,
+      details: { referenceCode: deleted.referenceCode },
+      ipAddress: getClientIp(request),
+    });
+    return Response.json({ ok: true });
+  } catch (err) {
+    console.error("DELETE /api/inquiries/[id] error:", err);
+    return Response.json({ error: "Failed to delete inquiry" }, { status: 500 });
   }
 }

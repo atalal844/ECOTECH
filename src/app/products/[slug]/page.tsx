@@ -40,17 +40,25 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const data = await getPublishedProductBySlug(slug);
+  const [lang, data] = await Promise.all([getServerLang(), getPublishedProductBySlug(slug)]);
   if (!data) return { title: "Product Not Found" };
+  const p = data.product;
+  const ar = lang === "ar";
+  const title =
+    (ar ? p.seoTitleAr : p.seoTitleEn) || (ar ? p.nameAr || p.nameEn : p.nameEn);
+  const description =
+    (ar ? p.seoDescriptionAr : p.seoDescriptionEn) ||
+    (ar ? p.shortOverviewAr || p.shortOverviewEn : p.shortOverviewEn) ||
+    "";
+  const image = p.ogImageUrl || data.images?.[0]?.url;
 
   return {
-    title: data.product.seoTitleEn || data.product.nameEn,
-    description:
-      data.product.seoDescriptionEn || data.product.shortOverviewEn || "",
+    title,
+    description,
     openGraph: {
-      title: data.product.seoTitleEn || data.product.nameEn,
-      description: data.product.shortOverviewEn || "",
-      images: data.product.ogImageUrl ? [data.product.ogImageUrl] : [],
+      title,
+      description,
+      images: image ? [image] : ["/ecotech-social.png"],
     },
   };
 }

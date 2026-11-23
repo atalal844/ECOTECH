@@ -10,10 +10,19 @@ import {
 import { logActivity, getClientIp } from "@/lib/audit";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { ensureDatabaseSeeded } from "@/db/seed";
+import {
+  getSecurity,
+  saveSecurity,
+  isLocked,
+  withFailure,
+  clearFailures,
+  checkTotp,
+} from "@/lib/security";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(4),
+  code: z.string().max(12).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -70,8 +79,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let sec = await getSecurity(user.id);
+    const lockedMinutes = isLocked(sec);
+    if (lockedMinutes) {
+      return Response.json(
+        {
+          error: `Too many failed attempts. This account is locked for about ${lockedMinutes} more minute(s). You can also reset the password by email.`,
+        },
+        { status: 423 }
+      );
+    }
+
     const valid = await verifyPassword(parsed.data.password, user.passwordHash);
     if (!valid) {
+      sec = withFailure(sec);
+      await saveSecurity(user.id, sec);
+      if (sec.lockedUntil) {
+        await logActivity({
+          userId: user.id,
+          userEmail: email,
+          action: "account_locked",
+          entityType: "auth",
+          entityId: user.id,
+          ipAddress: ip,
+        });
+      }
       await logActivity({
         userEmail: email,
         action: "login_failed",
@@ -83,6 +115,23 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+
+    if (sec.totpEnabled && sec.totpSecret) {
+      if (!parsed.data.code) {
+        return Response.json({ requires2fa: true });
+      }
+      const step = checkTotp(sec.totpSecret, parsed.data.code);
+      if (step === null || step === sec.lastTotpStep) {
+        sec = withFailure(sec);
+        await saveSecurity(user.id, sec);
+        return Response.json(
+          { error: "Invalid verification code.", requires2fa: true },
+          { status: 401 }
+        );
+      }
+      sec = { ...sec, lastTotpStep: step };
+    }
+    await saveSecurity(user.id, clearFailures(sec));
 
     await db
       .update(users)
