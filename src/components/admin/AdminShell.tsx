@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
+  ShieldCheck,
   Package,
   FolderTree,
   Image as ImageIcon,
@@ -27,6 +28,7 @@ import { DocumentsManager } from "./DocumentsManager";
 import { InquiriesManager } from "./InquiriesManager";
 import { CmsSettingsManager } from "./CmsSettingsManager";
 import { UsersManager } from "./UsersManager";
+import { SecurityPanel } from "./SecurityPanel";
 
 type TabId =
   | "overview"
@@ -36,7 +38,8 @@ type TabId =
   | "documents"
   | "cms"
   | "inquiries"
-  | "users";
+  | "users"
+  | "security";
 
 interface OverviewData {
   stats: {
@@ -201,6 +204,12 @@ export function AdminShell({ user }: { user: AuthUser }) {
       icon: Users,
       visible:
         user.roleSlug === "super_admin" || user.roleSlug === "admin",
+    },
+    {
+      id: "security",
+      label: "My Security",
+      icon: ShieldCheck,
+      visible: true,
     },
   ];
 
@@ -441,7 +450,8 @@ export function AdminShell({ user }: { user: AuthUser }) {
           {activeTab === "media" && <MediaManager />}
           {activeTab === "documents" && <DocumentsManager />}
           {activeTab === "cms" && <CmsSettingsManager />}
-          {activeTab === "inquiries" && <InquiriesManager />}
+          {activeTab === "inquiries" && <InquiriesManager isSuperAdmin={user.roleSlug === "super_admin"} />}
+          {activeTab === "security" && <SecurityPanel />}
           {activeTab === "users" && (
             <UsersManager isSuperAdmin={user.roleSlug === "super_admin"} />
           )}

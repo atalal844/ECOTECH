@@ -9,15 +9,14 @@ import {
   ServicesInquiry,
   type ServiceKey,
 } from "@/components/public/ServicesInquiry";
+import { pageMetadata } from "@/lib/seo";
 import { getServicesContent } from "@/lib/services-store";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Services | الخدمات",
-  description:
-    "Warehousing and inventory management, and a fiber-optic cable maintenance and testing lab.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return pageMetadata("services");
+}
 
 const T = {
   en: {
