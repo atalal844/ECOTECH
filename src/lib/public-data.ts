@@ -16,32 +16,6 @@ import { ensureDatabaseSeeded } from "@/db/seed";
 import { isPublicSettingKey } from "@/lib/public-settings";
 import type { Lang } from "./i18n";
 
-// Regional offices shown on the contact page. Main contact details (email,
-// phone, address, map, social links) come from the admin panel settings.
-export const VERIFIED_CONTACT_OFFICES = [
-  {
-    "country": "EGYPT",
-    "address": "20 Sayed Zakaria Khaleel St.,Masaken Sheraton,",
-    "phones": [
-      "+2 (02) 2269 5345"
-    ]
-  },
-  {
-    "country": "JORDAN",
-    "address": "190 Zahran st,Amman",
-    "phones": [
-      "+962 77 900 7000"
-    ]
-  },
-  {
-    "country": "Saudi Arabia",
-    "address": "7069 Hital Tower King Fahd Road , Al Sahafa Dist. Riyadh 13315 - 2416 Kingdom of Saudi Arabia",
-    "phones": [
-      "+966 56 985 5716"
-    ]
-  }
-];
-
 export async function getServerLang(): Promise<Lang> {
   const cookieStore = await cookies();
   return cookieStore.get("ecotech_lang")?.value === "ar" ? "ar" : "en";
