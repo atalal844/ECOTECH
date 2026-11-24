@@ -1,7 +1,7 @@
 import React from "react";
 import { pageMetadata } from "@/lib/seo";
 import { Mail, Phone, MapPin, Clock, Globe } from "lucide-react";
-import { getServerLang, getPublicSiteChrome, VERIFIED_CONTACT_OFFICES } from "@/lib/public-data";
+import { getServerLang, getPublicSiteChrome } from "@/lib/public-data";
 import { UI_LABELS, pickText } from "@/lib/i18n";
 import { SiteHeader } from "@/components/public/SiteHeader";
 import { SiteFooter } from "@/components/public/SiteFooter";
@@ -96,7 +96,7 @@ export default async function ContactPage({
                       <div className="text-xs font-bold uppercase text-slate-400">
                         {lang === "ar" ? "العنوان" : "Business Address"}
                       </div>
-                      <div className="mt-0.5 font-medium" dir="ltr">{address}</div>
+                      <div className="mt-0.5 font-medium" dir={lang === "ar" ? "rtl" : "ltr"}>{address}</div>
                     </div>
                   </div>
                 )}
@@ -186,21 +186,6 @@ export default async function ContactPage({
               </div>}
             </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm space-y-5">
-              <h2 className="text-lg font-extrabold text-slate-950">
-                {lang === "ar" ? "مكاتبنا الإقليمية" : "Regional Offices"}
-              </h2>
-              {VERIFIED_CONTACT_OFFICES.slice(1).map((office) => (
-                <section key={office.country} className="space-y-2 border-t border-slate-100 pt-4 text-sm text-slate-600">
-                  <h3 className="font-bold text-[#250C52]">
-                    {lang === "ar" ? (office.country === "JORDAN" ? "الأردن" : "المملكة العربية السعودية") : office.country}
-                  </h3>
-                  <p dir="ltr">{office.address}</p>
-                  {office.phones.map((phone) => <a key={phone} href={`tel:${phone.replace(/[^+\d]/g, "")}`} dir="ltr" className="block font-medium hover:underline">{phone}</a>)}
-                </section>
-              ))}
-            </div>
-
             {/* Google Maps Integration */}
             {mapEmbedUrl && (
               <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
@@ -237,4 +222,4 @@ export default async function ContactPage({
       />
     </div>
   );
-          }
+}
